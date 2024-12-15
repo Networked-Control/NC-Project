@@ -106,7 +106,10 @@ disp(['Spectral Radius: ', num2str(spectral_radius)]);
 alpha = 2;  % Must be positive, the negative sign is already considered in the LMI computation
 rho_DT = exp(alpha*Ts);
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1;
+radius = 1; % center and radius are computed for Circle LMIs
+angle = 10; % Sector LMIs
+alpha_L = 0.1; % Effort LMIs
+alpha_Y = 0.1; % Effort LMIs
 
 % Centralized LMI Performance
 ContStruc_Centr = ones(N,N);
@@ -117,7 +120,9 @@ ContStruc_Centr = ones(N,N);
 [K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_DeDicont(A,Bd,Cd,N,ContStruc_Centr); % LMI for stability
 [K_c_CT_perf,rho_c_CT_perf,feas_c_CT_perf]=LMI_CT_DeDicont_perf(A,Bd,Cd,N,ContStruc_Centr,alpha); % LMI for performance
 [K_c_CT_circle,rho_c_CT_circle,feas_c_CT_circle]=LMI_Circle_Area_CT(A,Bd,Cd,N,ContStruc_Centr,center,radius) % LMI for circle delimited area
-
+%[K_c_CT_sector,rho_c_CT_sector,feas_c_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Centr,angle) % LMI for sector delimited area
+[K_c_CT_effort,rho_c_CT_effort,feas_c_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Centr,alpha_L,alpha_Y) % LMI for sector delimited area
+[K_c_CT_H2,rho_c_CT_H2,feas_c_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
 % Discrete Time
 [K_c_DT,rho_c_DT,feas_c_DT]=LMI_DT_DeDicont(F,Gd,Hd,N,ContStruc_Centr); % LMI for stability
 [K_c_DT_perf,rho_c_DT_perf,feas_c_DT_perf]=LMI_DT_DeDicont_perf(F,Gd,Hd,N,ContStruc_Centr,rho_DT); % LMI for performance
@@ -128,6 +133,9 @@ disp('Results (Continuous-time):')
 disp(['-  Centralized: Feasibility=',num2str(feas_c_CT),', rho=',num2str(rho_c_CT),', FM=',num2str(cfm),'.'])
 disp(['-  Centralized_Perf: Feasibility=',num2str(feas_c_CT_perf),', rho=',num2str(rho_c_CT_perf),', FM=',num2str(cfm),'.'])
 disp(['-  Centralized_Circle: Feasibility=',num2str(feas_c_CT_circle),', rho=',num2str(rho_c_CT_circle),', FM=',num2str(cfm),'.'])
+%disp(['-  Centralized_Sector: Feasibility=',num2str(feas_c_CT_sector),', rho=',num2str(rho_c_CT_sector),', FM=',num2str(cfm),'.'])
+disp(['-  Centralized_Effort: Feasibility=',num2str(feas_c_CT_effort),', rho=',num2str(rho_c_CT_effort),', FM=',num2str(cfm),'.'])
+disp(['-  Centralized_H2: Feasibility=',num2str(feas_c_CT_H2),', rho=',num2str(rho_c_CT_H2),', FM=',num2str(cfm),'.'])
 
 disp('Results (Discrete-time):')
 disp(['-  Centralized: Feasibility=',num2str(feas_c_DT),', rho=',num2str(rho_c_DT),', FM=',num2str(cfm_DT),'.'])
