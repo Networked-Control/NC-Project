@@ -105,6 +105,7 @@ disp(['Spectral Radius: ', num2str(spectral_radius)]);
 ContStruc_Centr = ones(N,N);
 [cfm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Centr,3);
 [cfm_DT]=di_fixed_modes(F,Gd,Hd,N,ContStruc_Centr,3);
+
 [K_c,rho_c,feas_c]=LMI_CT_DeDicont(A,Bd,Cd,N,ContStruc_Centr);
 [K_c_DT,rho_c_DT,feas_c_DT]=LMI_DT_DeDicont(F,Gd,Hd,N,ContStruc_Centr);
 
@@ -112,6 +113,7 @@ ContStruc_Centr = ones(N,N);
 ContStruc_Dec = diag(ones(N,1));
 [Dfm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Dec,3);
 [Dfm_DT]=di_fixed_modes(F,Gd,Hd,N,ContStruc_Dec,3);
+
 [K_De,rho_De,feas_De]=LMI_CT_DeDicont(A,Bd,Cd,N,ContStruc_Dec);
 [K_De_DT,rho_De_DT,feas_De_DT]=LMI_DT_DeDicont(F,Gd,Hd,N,ContStruc_Dec);
 
@@ -123,6 +125,7 @@ for i=1:N-1
 end
 [string_fm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Distr_string,3);
 [string_fm_DT]=di_fixed_modes(F,Gd,Hd,N,ContStruc_Distr_string,3);
+
 [K_string,rho_string,feas_string]=LMI_CT_DeDicont(A,Bd,Cd,N,ContStruc_Distr_string);
 [K_string_DT,rho_string_DT,feas_string_DT]=LMI_DT_DeDicont(F,Gd,Hd,N,ContStruc_Distr_string);
 
@@ -135,6 +138,7 @@ for i=2:N
 end
 [star_fm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Distr_star,3);
 [star_fm_DT]=di_fixed_modes(F,Gd,Hd,N,ContStruc_Distr_star,3);
+
 [K_star,rho_star,feas_star]=LMI_CT_DeDicont(A,Bd,Cd,N,ContStruc_Distr_star);
 [K_star_DT,rho_star_DT,feas_star_DT]=LMI_DT_DeDicont(F,Gd,Hd,N,ContStruc_Distr_star);
 
@@ -151,63 +155,3 @@ disp(['-  Centralized: Feasibility=',num2str(feas_c_DT),', rho=',num2str(rho_c_D
 disp(['-  Decentralized: Feasibility=',num2str(feas_De_DT),', rho=',num2str(rho_De_DT),', FM=',num2str(Dfm_DT),'.'])
 disp(['-  Distributed (string): Feasibility=',num2str(feas_string_DT),', rho=',num2str(rho_string_DT),', FM=',num2str(string_fm_DT),'.'])
 disp(['-  Distributed (star): Feasibility=',num2str(feas_star_DT),', rho=',num2str(rho_star_DT),', FM=',num2str(star_fm_DT),'.'])
-
-%% Plots
-Gtot=[];
-Htot=[];
-Btot=[];
-Ctot=[];
-for i=1:N
-    Btot=[B,Bd{i}];
-    Ctot=[C
-        Cd{i}];
-    Gtot=[G,Gd{i}];
-    Htot=[H
-        Hd{i}];
-end
-
-% simulation data
-Tfinal=10;
-T=0:0.01:Tfinal;
-min_x0 = 1;
-max_x0 = 3;
-random_number = min_x0 + (max_x0-min_x0) .* rand(1,1);  % Generate a random number between [min_x0, max_x0]
-x0 = repmat(random_number,36,1);
-k=0;
-for t=T
-    k=k+1;
-    x_c(:,k)=expm((A+B*K_c)*t)*x0;
-    x_De(:,k)=expm((A+B*K_De)*t)*x0;
-    x_string(:,k)=expm((A+B*K_string)*t)*x0;
-    x_star(:,k)=expm((A+B*K_star)*t)*x0;
-end
-for k=1:Tfinal/Ts
-    x_c_DT(:,k)=((F+G*K_c_DT)^k)*x0;
-    x_De_DT(:,k)=((F+G*K_De_DT)^k)*x0;
-    x_string_DT(:,k)=((F+G*K_string_DT)^k)*x0;
-    x_star_DT(:,k)=((F+G*K_star_DT)^k)*x0;
-end
-
-figure
-for i=1:N
-    subplot(N,2,2*(i-1)+1)
-    hold on
-    grid on
-    title(['\theta_{',num2str(i),'}'])
-    plot(T,[x_c((i-1)*4+1,:)],'k')
-    plot(T,[x_De((i-1)*4+1,:)],'m')
-    plot(T,[x_string((i-1)* 4+1,:)],'b')
-    plot(T,[x_star((i-1)*4+1,:)],'r')
-    axis([0 T(end) min(x0)-10 max(x0)+10])
-    
-    subplot(N,2,2*i)
-    hold on
-    grid on
-    title(['\theta_{',num2str(i),'}'])
-    plot(Ts:Ts:Tfinal,[x_c_DT((i-1)*4+1,:)],'k.-')
-    plot([Ts:Ts:Tfinal],[x_De_DT((i-1)*4+1,:)],'m.-')
-    plot(Ts:Ts:Tfinal,[x_string_DT((i-1)*4+1,:)],'b.-')
-    plot(Ts:Ts:Tfinal,[x_star_DT((i-1)*4+1,:)],'r.-')
-    axis([0 T(end) min(x0)-10 max(x0)+10])
-end
-legend('Centralized','Decentralized','Distributed (string)','Distributed (star)')

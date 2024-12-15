@@ -108,30 +108,34 @@ rho_DT = exp(alpha*Ts);
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1;
 
-% Centralized LMI Performance
-ContStruc_Centr = ones(N,N);
-[cfm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Centr,3);
-[cfm_DT]=di_fixed_modes(F,Gd,Hd,N,ContStruc_Centr,3);
+% Distributed LMI Performance
+ContStruc_Distr_string=eye(N);
+for i=1:N-1
+    ContStruc_Distr_string(i,i+1)=1;
+    ContStruc_Distr_string(i+1,i)=1;
+end
+[string_fm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Distr_string,3);
+[string_fm_DT]=di_fixed_modes(F,Gd,Hd,N,ContStruc_Distr_string,3);
 
 % Continuous Time 
-[K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_DeDicont(A,Bd,Cd,N,ContStruc_Centr); % LMI for stability
-[K_c_CT_perf,rho_c_CT_perf,feas_c_CT_perf]=LMI_CT_DeDicont_perf(A,Bd,Cd,N,ContStruc_Centr,alpha); % LMI for performance
-[K_c_CT_circle,rho_c_CT_circle,feas_c_CT_circle]=LMI_Circle_Area_CT(A,Bd,Cd,N,ContStruc_Centr,center,radius) % LMI for circle delimited area
+[K_string_CT,rho_string_CT,feas_string_CT]=LMI_CT_DeDicont(A,Bd,Cd,N,ContStruc_Distr_string); % LMI for stability
+[K_string_CT_perf,rho_string_CT_perf,feas_string_CT_perf]=LMI_CT_DeDicont_perf(A,Bd,Cd,N,ContStruc_Distr_string,alpha); % LMI for performance
+[K_string_CT_circle,rho_string_CT_circle,feas_string_CT_circle]=LMI_Circle_Area_CT(A,Bd,Cd,N,ContStruc_Distr_string,center,radius) % LMI for circle delimited area
 
 % Discrete Time
-[K_c_DT,rho_c_DT,feas_c_DT]=LMI_DT_DeDicont(F,Gd,Hd,N,ContStruc_Centr); % LMI for stability
-[K_c_DT_perf,rho_c_DT_perf,feas_c_DT_perf]=LMI_DT_DeDicont_perf(F,Gd,Hd,N,ContStruc_Centr,rho_DT); % LMI for performance
+[K_string_DT,rho_string_DT,feas_string_DT]=LMI_DT_DeDicont(F,Gd,Hd,N,ContStruc_Distr_string); % LMI for stability
+[K_string_DT_perf,rho_string_DT_perf,feas_string_DT_perf]=LMI_DT_DeDicont_perf(F,Gd,Hd,N,ContStruc_Distr_string,rho_DT); % LMI for performance
 
 %% Display
 
 disp('Results (Continuous-time):')
-disp(['-  Centralized: Feasibility=',num2str(feas_c_CT),', rho=',num2str(rho_c_CT),', FM=',num2str(cfm),'.'])
-disp(['-  Centralized_Perf: Feasibility=',num2str(feas_c_CT_perf),', rho=',num2str(rho_c_CT_perf),', FM=',num2str(cfm),'.'])
-disp(['-  Centralized_Circle: Feasibility=',num2str(feas_c_CT_circle),', rho=',num2str(rho_c_CT_circle),', FM=',num2str(cfm),'.'])
+disp(['-  Distributed (string): Feasibility=',num2str(feas_string_CT),', rho=',num2str(rho_string_CT),', FM=',num2str(string_fm),'.'])
+disp(['-  Distributed (string)_Perf: Feasibility=',num2str(feas_string_CT_perf),', rho=',num2str(rho_string_CT_perf),', FM=',num2str(string_fm),'.'])
+disp(['-  Distributed (string)_Circle: Feasibility=',num2str(feas_string_CT_circle),', rho=',num2str(rho_string_CT_circle),', FM=',num2str(string_fm),'.'])
 
 disp('Results (Discrete-time):')
-disp(['-  Centralized: Feasibility=',num2str(feas_c_DT),', rho=',num2str(rho_c_DT),', FM=',num2str(cfm_DT),'.'])
-disp(['-  Centralized_Perf: Feasibility=',num2str(feas_c_DT_perf),', rho=',num2str(rho_c_DT_perf),', FM=',num2str(cfm_DT),'.'])
+disp(['-  Distributed (string): Feasibility=',num2str(feas_string_DT),', rho=',num2str(rho_string_DT),', FM=',num2str(string_fm_DT),'.'])
+disp(['-  Distributed (string)_Perf: Feasibility=',num2str(feas_string_DT_perf),', rho=',num2str(rho_string_DT_perf),', FM=',num2str(string_fm_DT),'.'])
 
 %% Plots
 % Gtot=[];
@@ -159,9 +163,9 @@ disp(['-  Centralized_Perf: Feasibility=',num2str(feas_c_DT_perf),', rho=',num2s
 % % CT Simulation 
 % for t=T
 %     k=k+1;
-%     x_c_CT(:,k)=expm((A+B*K_c_CT)*t)*x0;
-%     x_c_CT_perf(:,k)=expm((A+B*K_c_CT_perf)*t)*x0;
-%     x_c_CT_circle(:,k)=expm((A+B*K_c_CT_circle)*t)*x0;
+%     x_c_CT(:,k)=expm((A+B*K_De_CT)*t)*x0;
+%     x_c_CT_perf(:,k)=expm((A+B*K_CT_perf)*t)*x0;
+%     x_c_CT_circle(:,k)=expm((A+B*K_CT_circle)*t)*x0;
 % end
 % 
 % % Continuous Time figure
@@ -201,7 +205,7 @@ disp(['-  Centralized_Perf: Feasibility=',num2str(feas_c_DT_perf),', rho=',num2s
 %     x_c(:,k)=expm((A+B*K_c)*t)*x0;
 % end
 % for k=1:Tfinal/Ts
-%     x_c_DT(:,k)=((F+G*K_c_DT)^k)*x0;
+%     x_c_DT(:,k)=((F+G*K_De_DT)^k)*x0;
 % end
 % 
 % figure
