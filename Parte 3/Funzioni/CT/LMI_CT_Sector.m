@@ -51,8 +51,11 @@ else
     end  
 end 
 
-LMIconstr=[[sin(angle)*(A*Y+Y*A'+Btot*L+L'*Btot')  cos(angle)*(A*Y-Y*A'+Btot*L-L'*Btot');
-           cos(angle)*(Y*A'-A*Y+L'*Btot'-Btot*L)    sin(angle)*(A*Y+Y*A'+Btot*L+L'*Btot')] <=-1e-2*eye(2*ntot)];
+M = [sin(angle)*(A*Y+Y*A'+Btot*L+L'*Btot')  cos(angle)*(A*Y-Y*A'+Btot*L-L'*Btot');
+     cos(angle)*(Y*A'-A*Y+L'*Btot'-Btot*L)    sin(angle)*(A*Y+Y*A'+Btot*L+L'*Btot')]  % 72 x72
+assignin('base', 'M', M);
+ 
+LMIconstr=[M <=-1e-5*eye(2*ntot)]+[Y>=1e-2*eye(ntot)];
 
 options=sdpsettings('solver','sedumi');
 J=optimize(LMIconstr,[],options);
