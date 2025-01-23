@@ -178,23 +178,24 @@ for t=T
     x_c_CT_perf(:,k)=expm((A+B*K_c_CT_perf)*t)*x0;
     x_c_CT_sector(:,k)=expm((A+B*K_c_CT_sector)*t)*x0;
     x_c_CT_effort(:,k)=expm((A+B*K_c_CT_effort)*t)*x0;
+    u_c_CT_effort(:,k) = K_c_CT_effort * x_c_CT_effort(:,k);
 end
 
 % Continuous Time figure
 figure
-plot(T, x_c_CT(1,:), T, x_c_CT_perf(1,:), T, x_c_CT_sector(1,:),T,x_c_CT_perf(1,:)) % Position of the first Mass along x direction
+plot(T, x_c_CT(1,:), T, x_c_CT_perf(1,:), T, x_c_CT_sector(1,:),T,x_c_CT_perf(1,:),T,u_c_CT_effort(1,:)) % Position of the first Mass along x direction
 title('CT controller Position in X')  
 grid on
-legend('CT Controller', 'CT Performance', 'CT Sector', 'CT Effort') % Aggiunge la legenda
+legend('CT Controller', 'CT Performance', 'CT Sector', 'CT Effort','U(x) Effort') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (X)') % Etichetta dell'asse y
 
 % Secondo grafico: posizione lungo Y
 figure
-plot(T, x_c_CT(3,:), T, x_c_CT_perf(3,:), T, x_c_CT_sector(3,:),T, x_c_CT_effort(3,:)) % Position of the first Mass along y direction
+plot(T, x_c_CT(3,:), T, x_c_CT_perf(3,:), T, x_c_CT_sector(3,:),T, x_c_CT_effort(3,:),T, u_c_CT_effort(2,:)) % Position of the first Mass along y direction
 title('CT controllers Position in Y')
 grid on
-legend('CT Controller', 'CT Performance', 'CT Sector','CT Effort') % Aggiunge la legenda
+legend('CT Controller', 'CT Performance', 'CT Sector','CT Effort','U(y) Effort') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (Y)') % Etichetta dell'asse y
 
