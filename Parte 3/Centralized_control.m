@@ -111,8 +111,8 @@ rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
-alpha_L = 0.01; % Effort LMIs
-alpha_Y = 10; % Effort LMIs
+alpha_L = 10; % Effort LMIs
+alpha_Y = 0; % Effort LMIs
 
 % Centralized LMI Performance
 ContStruc_Centr = ones(N,N);
@@ -174,6 +174,7 @@ k = 0;
 % CT Simulation 
 for t=T
     k=k+1;
+    x_c_free(:,k)=expm((A)*t)*x0; % No control
     x_c_CT(:,k)=expm((A+B*K_c_CT)*t)*x0;
     x_c_CT_perf(:,k)=expm((A+B*K_c_CT_perf)*t)*x0;
     x_c_CT_sector(:,k)=expm((A+B*K_c_CT_sector)*t)*x0;
@@ -183,19 +184,19 @@ end
 
 % Continuous Time figure
 figure
-plot(T, x_c_CT(1,:), T, x_c_CT_perf(1,:), T, x_c_CT_sector(1,:),T,x_c_CT_perf(1,:),T,u_c_CT_effort(1,:)) % Position of the first Mass along x direction
+plot(T, x_c_free(1,:),T, x_c_CT(1,:), T, x_c_CT_perf(1,:), T, x_c_CT_sector(1,:),T,x_c_CT_effort(1,:),T,u_c_CT_effort(1,:)) % Position of the first Mass along x direction
 title('CT controller Position in X')  
 grid on
-legend('CT Controller', 'CT Performance', 'CT Sector', 'CT Effort','U(x) Effort') % Aggiunge la legenda
+legend('No control','CT Stability', 'CT Performance', 'CT Sector', 'CT Effort','U(x) Effort') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (X)') % Etichetta dell'asse y
 
 % Secondo grafico: posizione lungo Y
 figure
-plot(T, x_c_CT(3,:), T, x_c_CT_perf(3,:), T, x_c_CT_sector(3,:),T, x_c_CT_effort(3,:),T, u_c_CT_effort(2,:)) % Position of the first Mass along y direction
+plot(T, x_c_free(3,:),T, x_c_CT(3,:), T, x_c_CT_perf(3,:), T, x_c_CT_sector(3,:),T, x_c_CT_effort(3,:),T, u_c_CT_effort(2,:)) % Position of the first Mass along y direction
 title('CT controllers Position in Y')
 grid on
-legend('CT Controller', 'CT Performance', 'CT Sector','CT Effort','U(y) Effort') % Aggiunge la legenda
+legend('No control','CT Stability', 'CT Performance', 'CT Sector','CT Effort','U(y) Effort') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (Y)') % Etichetta dell'asse y
 

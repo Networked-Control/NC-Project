@@ -30,6 +30,7 @@ mtot=sum(m);      % mtot = 18
 assignin('base', 'mtot', mtot);
 
 k_L =sdpvar;
+k_L_sqrt = sqrt(k_L);
 k_Y = sdpvar;
 
 if ContStruc==ones(N,N)
@@ -56,7 +57,7 @@ end
 
     LMIconstr=[Y*A'+A*Y+Btot*L+L'*Btot'<=-1e-2*eye(ntot)]+[Y>=1e-2*eye(ntot)];
 
-    M = [sqrt(k_L)*eye(ntot) L';L eye(mtot)];  % 54x54
+    M = [k_L_sqrt*eye(ntot) L';L eye(mtot)];  % 54x54
     assignin('base', 'M', M);
 
     constr_1 = [M>=1e-2*eye(ntot+mtot)];
