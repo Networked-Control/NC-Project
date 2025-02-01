@@ -111,7 +111,7 @@ rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
-alpha_L = 10; % Effort LMIs
+alpha_L = 10^10; % Effort LMIs
 alpha_Y = 0; % Effort LMIs
 
 % Centralized LMI Performance
@@ -192,7 +192,7 @@ end
 % Continuous Time figure
 % Primo grafico: posizione lungo X
 figure
-plot(T, x_c_free(1,:),T, x_c_CT(1,:), T, x_c_CT_perf(1,:), T, x_c_CT_sector(1,:),T,x_c_CT_effort(1,:),T,u_c_CT_effort(1,:)) % Position of the first Mass along x direction
+plot(T, x_c_free(1,:),T, x_c_CT(1,:), T, x_c_CT_perf(1,:), T, x_c_CT_sector(1,:),T,x_c_CT_effort(1,:)) % Position of the first Mass along x direction
 title('CT controller Position in X')  
 grid on
 legend('No control','CT Stability', 'CT Performance', 'CT Sector', 'CT Effort') % Aggiunge la legenda
