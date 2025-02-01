@@ -48,7 +48,7 @@ C=eye(4*N);
 
 %% Discretization
 % Time costant analysis
-Ts= 0.01; %Shannon Theorem on signal sampling (fs=2*fc at least)
+Ts= 0.1; %Shannon Theorem on signal sampling (fs=2*fc at least)
 [F,G,H,W,Ts]=ssdata(c2d(ss(A,B,C,[]),Ts));
 
 %% Decomposition
