@@ -111,8 +111,8 @@ rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
-alpha_L = 0.1; % Effort LMIs
-alpha_Y = 0.1; % Effort LMIs
+alpha_L = 10^10; % Effort LMIs
+alpha_Y = 0; % Effort LMIs
 
 % Centralized LMI Performance
 ContStruc_Centr = ones(N,N);
@@ -123,7 +123,7 @@ ContStruc_Centr = ones(N,N);
  [K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Centr); % LMI for stability
  [K_c_CT_perf,rho_c_CT_perf,feas_c_CT_perf]=LMI_CT_Performance(A,Bd,Cd,N,ContStruc_Centr,alpha); % LMI for performance
  [K_c_CT_sector,rho_c_CT_sector,feas_c_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Centr,angle) % LMI for sector delimited area
-% [K_c_CT_effort,rho_c_CT_effort,feas_c_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Centr,alpha_L,alpha_Y) % LMI for sector delimited area
+ [K_c_CT_effort,rho_c_CT_effort,feas_c_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Centr,alpha_L,alpha_Y) % LMI for sector delimited area
 % [K_c_CT_H2,rho_c_CT_H2,feas_c_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
 
 % % Discrete Time
@@ -138,7 +138,7 @@ ContStruc_Centr = ones(N,N);
  disp(['-  Centralized: Feasibility=',num2str(feas_c_CT),', rho=',num2str(rho_c_CT),', FM=',num2str(cfm),'.'])
  disp(['-  Centralized_Perf: Feasibility=',num2str(feas_c_CT_perf),', rho=',num2str(rho_c_CT_perf),', FM=',num2str(cfm),'.'])
  disp(['-  Centralized_Sector: Feasibility=',num2str(feas_c_CT_sector),', rho=',num2str(rho_c_CT_sector),', FM=',num2str(cfm),'.'])
-% disp(['-  Centralized_Effort: Feasibility=',num2str(feas_c_CT_effort),', rho=',num2str(rho_c_CT_effort),', FM=',num2str(cfm),'.'])
+ disp(['-  Centralized_Effort: Feasibility=',num2str(feas_c_CT_effort),', rho=',num2str(rho_c_CT_effort),', FM=',num2str(cfm),'.'])
 % disp(['-  Centralized_H2: Feasibility=',num2str(feas_c_CT_H2),', rho=',num2str(rho_c_CT_H2),', FM=',num2str(cfm),'.'])
 
 % disp('Results (Discrete-time):')
@@ -174,28 +174,56 @@ k = 0;
 % CT Simulation 
 for t=T
     k=k+1;
+
+    % state computation
+    x_c_free(:,k)=expm((A)*t)*x0; % No control
     x_c_CT(:,k)=expm((A+B*K_c_CT)*t)*x0;
     x_c_CT_perf(:,k)=expm((A+B*K_c_CT_perf)*t)*x0;
     x_c_CT_sector(:,k)=expm((A+B*K_c_CT_sector)*t)*x0;
+    x_c_CT_effort(:,k)=expm((A+B*K_c_CT_effort)*t)*x0;
+
+    % control variable
+    u_c_CT(:,k) = K_c_CT * x_c_CT(:,k);
+    u_c_CT_perf(:,k) = K_c_CT_perf * x_c_CT_perf(:,k);
+    u_c_CT_sector(:,k) = K_c_CT_sector * x_c_CT_sector(:,k);
+    u_c_CT_effort(:,k) = K_c_CT_effort * x_c_CT_effort(:,k);
 end
 
 % Continuous Time figure
+% Primo grafico: posizione lungo X
 figure
-plot(T, x_c_CT(1,:), T, x_c_CT_perf(1,:), T, x_c_CT_sector(1,:)) % Position of the first Mass along x direction
+plot(T, x_c_free(1,:),T, x_c_CT(1,:), T, x_c_CT_perf(1,:), T, x_c_CT_sector(1,:),T,x_c_CT_effort(1,:)) % Position of the first Mass along x direction
 title('CT controller Position in X')  
 grid on
-legend('CT Controller', 'CT Performance', 'CT Sector') % Aggiunge la legenda
+legend('No control','CT Stability', 'CT Performance', 'CT Sector', 'CT Effort') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (X)') % Etichetta dell'asse y
 
 % Secondo grafico: posizione lungo Y
 figure
-plot(T, x_c_CT(3,:), T, x_c_CT_perf(3,:), T, x_c_CT_sector(3,:)) % Position of the first Mass along y direction
+plot(T, x_c_free(3,:),T, x_c_CT(3,:), T, x_c_CT_perf(3,:), T, x_c_CT_sector(3,:),T, x_c_CT_effort(3,:)) % Position of the first Mass along y direction
 title('CT controllers Position in Y')
 grid on
-legend('CT Controller', 'CT Performance', 'CT Sector') % Aggiunge la legenda
+legend('No control','CT Stability', 'CT Performance', 'CT Sector','CT Effort') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (Y)') % Etichetta dell'asse y
+
+% Terzo grafico: variabile di controllo U lungo X
+figure
+plot(T, u_c_CT(1,:),T, u_c_CT_perf(1,:),T, u_c_CT_sector(1,:),T, u_c_CT_effort(1,:)) % variabile di controllo lungo x
+title('CT control variable in X')
+grid on
+legend('CT Stability', 'CT Performance', 'CT Sector','CT Effort') % Aggiunge la legenda
+xlabel('Time (s)') % Etichetta dell'asse x
+ylabel('Control action (U(x))') % Etichetta dell'asse x
+
+figure
+plot(T, u_c_CT(2,:),T, u_c_CT_perf(2,:),T, u_c_CT_sector(2,:),T, u_c_CT_effort(2,:)) % variabile di controllo lungo y
+title('CT control variable in Y')
+grid on
+legend('CT Stability', 'CT Performance', 'CT Sector','CT Effort') % Aggiunge la legenda
+xlabel('Time (s)') % Etichetta dell'asse y
+ylabel('Control action (U(y))') % Etichetta dell'asse y
 
 % DT Simulation
 
