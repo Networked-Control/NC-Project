@@ -63,7 +63,7 @@ end
 
     constr_2 = [M_2>=1e-2*eye(ntot*2)];
 
-%Optimization
+% Optimization
 
 constraints = [constr_1,constr_2,LMIconstr];
 objective_function = alpha_L*k_L+alpha_Y*k_Y;

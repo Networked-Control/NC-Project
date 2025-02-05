@@ -51,13 +51,14 @@ else
     end
 end
 
-LMIconstr=[[(radius^2-center^2)*P-F*P*F'-G*L*F'-F*L'*G'-center*(P*F'+L'*G'+G*L+F*P)     G*L;
-                            L'*G'                                         P     ]>=-1e-2*eye(2*ntot)];
+LMIconstr=[[(radius^2-center^2)*P-F*P*F'-Gtot*L*F'-F*L'*Gtot'-center*(P*F'+L'*Gtot'+Gtot*L+F*P)     Gtot*L;
+                            L'*Gtot'                                         P     ]>=-1e-2*eye(2*ntot)];
 options=sdpsettings('solver','sedumi');
 J=optimize(LMIconstr,[],options);
 feas=J.problem;
-L=double(L);
-Y=double(Y);
 
-K=L/Y;
-rho=max(real(eig(A+Btot*K)));
+L=double(L);
+P=double(P);
+
+K=L/P;
+rho=max(abs(eig(F+Gtot*K)));

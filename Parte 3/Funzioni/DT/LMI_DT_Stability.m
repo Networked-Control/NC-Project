@@ -52,7 +52,7 @@ else
 end
 
 LMIconstr=[[P-F*P*F'-F*L'*Gtot'-Gtot*L*F' Gtot*L;
-    L'*Gtot' P]>=1e-2*eye(ntot*2)];
+            L'*Gtot' P]>=1e-2*eye(ntot*2)];
 
 %options=sdpsettings('solver','sedumi');
 J=optimize(LMIconstr);%[],options);
