@@ -25,9 +25,7 @@ for i=1:N
     Btot=[Btot,B{i}];
 end
 ntot=size(A,1);   % ntot = 36
-assignin('base', 'ntot', ntot);
 mtot=sum(m);      % mtot = 18
-assignin('base', 'mtot', mtot);
 
 k_L =sdpvar;
 k_L_sqrt = sqrt(k_L);
@@ -58,12 +56,10 @@ end
     LMIconstr=[Y*A'+A*Y+Btot*L+L'*Btot'<=-1e-2*eye(ntot)]+[Y>=1e-2*eye(ntot)];
 
     M = [k_L_sqrt*eye(ntot) L';L eye(mtot)];  % 54x54
-    assignin('base', 'M', M);
 
     constr_1 = [M>=1e-2*eye(ntot+mtot)];
 
     M_2 = [k_Y*eye(ntot) eye(ntot);eye(ntot) Y]; % 72x72
-    assignin('base', 'M_2', M_2);
 
     constr_2 = [M_2>=1e-2*eye(ntot*2)];
 

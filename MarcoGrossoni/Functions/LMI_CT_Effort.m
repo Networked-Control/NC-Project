@@ -71,7 +71,7 @@ end
 
 constraints = [constr_1,constr_2,LMIconstr];
 objective_function = alpha_L*k_L+alpha_Y*k_Y;
-options=sdpsettings('solver','sedumi');
+options=sdpsettings('solver','sdpt3');
 
 J = optimize(constraints,objective_function,options);
 

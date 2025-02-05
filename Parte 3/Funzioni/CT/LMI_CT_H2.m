@@ -26,20 +26,12 @@ end
 ntot=size(A,1);
 mtot=sum(m);
 
-R_sqrt= [1 0 0;
-        0 1 0;
-        0 0 1];
+R_sqrt= eye(18);
 
-% C_H2 = [eye(6);zeros(3,6)];
-% disp(C_H2);
-% D_H2 = [zeros(6,3);R_sqrt];
-% disp(D_H2)
-
-% Problema di dimensionamento di C_H2 e D_H2, rivedere
-n = 54; % Numero di righe
-C_H2 = rand(n, 36); % Matrice random n x 36
-D_H2 = rand(n, 18); % Matrice random n x 18
-
+ C_H2 = [eye(36);zeros(18,36)];
+ disp(C_H2);
+ D_H2 = [zeros(36,18);R_sqrt];
+ disp(D_H2)
 
 S = sdpvar(mtot+ntot,mtot+ntot);
 
@@ -67,10 +59,6 @@ end
 
 LMIconstr=[Y*A'+A*Y+Btot*L+L'*Btot'+eye(ntot)<=-1e-2*eye(ntot)]+[Y>=1e-2*eye(ntot)];
 
-%disp(size(S));            % 54 x 54
-%disp(L);                  % 18 x 36
-%disp(size(Y));            % 36 x 36 
-
 H2_constr = [S C_H2*Y + D_H2*L; L'*D_H2' + Y*C_H2' Y];
 
 % Determina la dimensione della matrice H2_constr
@@ -82,7 +70,7 @@ H2_constrain = (H2_constr >= 1e-2 * eye(n));
 objective_function = trace(S);
 
 constrains = [LMIconstr,H2_constrain];
-options=sdpsettings('solver','sdpt3');
+options=sdpsettings('solver','sedumi');
 J=optimize(constrains,objective_function,options);
 feas=J.problem;
 L=double(L);

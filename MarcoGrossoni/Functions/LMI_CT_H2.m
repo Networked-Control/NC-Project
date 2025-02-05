@@ -36,8 +36,8 @@ R_sqrt= [1 0 0;
         0 1 0;
         0 0 1];
 
-C_H2 = [eye(6);zeros(3,6)];
-D_H2 = [zeros(6,3);R_sqrt];
+C_H2 = [eye(6);zeros(3,6)]; % 9x6
+D_H2 = [zeros(6,3);R_sqrt]; % 9x6
 
 
 yalmip clear
