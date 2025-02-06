@@ -201,27 +201,9 @@ ylabel('Position (X)')
 
 %% Plotting py1 coordinate for every LMI used
 figure
-plot([Ts:Ts:Tfinal],x_c_DT(3,:),[Ts:Ts:Tfinal],x_c_DT_perf(3,:),[Ts:Ts:Tfinal],x_c_DT_circle(3,:),[Ts:Ts:Tfinal],x_c_DT_effort(3,:),[Ts:Ts:Tfinal],x_c_DT_H2(3,:))
+plot([Ts:Ts:Tfinal],_c_DT(1,:),[Ts:Ts:Tfinal],x_c_DT_perf(1,:),[Ts:Ts:Tfinal],x_c_DT_circle(1,:),[Ts:Ts:Tfinal],x_c_DT_effort(1,:),[Ts:Ts:Tfinal],x_c_DT_H2(1,:))
 title('DT controllers graphs')
 grid on
 legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
 xlabel('Time (k)')
 ylabel('Position (Y)')
-
-%% Plotting ux control effort for every LMI used
-figure
-plot([Ts:Ts:Tfinal],u_c_DT(1,:),[Ts:Ts:Tfinal],u_c_DT_perf(1,:),[Ts:Ts:Tfinal],u_c_DT_circle(1,:),[Ts:Ts:Tfinal],u_c_DT_effort(1,:),[Ts:Ts:Tfinal],u_c_DT_H2(1,:))
-title('DT controllers graphs')
-grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
-xlabel('Time (k)')
-
-%% Plotting uy control effort for every LMI used
-figure
-plot([Ts:Ts:Tfinal],u_c_DT(2,:),[Ts:Ts:Tfinal],u_c_DT_perf(2,:),[Ts:Ts:Tfinal],u_c_DT_circle(2,:),[Ts:Ts:Tfinal],u_c_DT_effort(2,:),[Ts:Ts:Tfinal],u_c_DT_H2(2,:))
-title('DT controllers graphs')
-grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
-xlabel('Time (k)')
-ylabel('Position (X)')
-ylabel('Position (X)')
