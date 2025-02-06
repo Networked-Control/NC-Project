@@ -100,7 +100,6 @@ alpha_Y = 0; % Effort LMIs
 % Centralized LMI Performance
 ContStruc_Centr = ones(N,N);
 [cfm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Centr,3);
-[cfm_DT]=di_fixed_modes(F,Gd,Hd,N,ContStruc_Centr,3);
 
 % Continuous Time 
  [K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Centr); % LMI for stability

@@ -1,4 +1,4 @@
-function [K,rho,feas,k_L,k_Y]=LMI_DT_effort(F,G,H,N,ContStruc)
+function [K,rho,feas,k_L,k_Y]=LMI_DT_effort(F,G,H,N,ContStruc,alpha_L,alpha_Y)
 % Computes, using LMIs, the distributed "state feedback" control law for the discrete-time system, with reference to the control
 % information structure specified by 'ContStruc'.
 %
@@ -17,22 +17,14 @@ function [K,rho,feas,k_L,k_Y]=LMI_DT_effort(F,G,H,N,ContStruc)
 % - rho: spectral radius of matrix (F+G*K) - note that [H{1}',...,
 % H{N}']=I
 % - feas: feasibility of the LMI problem (=0 if yes)
-
-for i=1:N
-    Gdec{i}=G(:,i);
-    Hdec{i}=(H(2*(i-1)+1:2*i,:))';
-end
-
 Gtot=[];
 for i=1:N
-    m(i)=size(Gdec{i},2);
-    n(i)=size(Hdec{i},2);
-    Gtot=[Gtot,Gdec{i}];
+    m(i)=size(G{i},2);
+    n(i)=size(H{i},2);
+    Gtot=[Gtot,G{i}];
 end
 ntot=size(F,1);
 mtot=sum(m);
-alpha_L = 0.01;
-alpha_Y = 10;
 
 yalmip clear
 
@@ -78,7 +70,7 @@ end
 
 constraints = [LMIconstr,constr_1,constr_2];
 objective_function = alpha_L*k_L+alpha_Y*k_Y;
-options=sdpsettings('solver','sdpt3');
+options=sdpsettings('solver','sedumi');
 
 % Display constraints
 disp('Constraints:');

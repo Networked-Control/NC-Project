@@ -98,20 +98,22 @@ alpha_Y = 0; % Effort LMIs
 
 % Centralized LMI Performance
 ContStruc_Centr = ones(N,N);
-[cfm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Centr,3);
 [cfm_DT]=di_fixed_modes(F,Gd,Hd,N,ContStruc_Centr,3);
 
  % Discrete Time
  [K_c_DT,rho_c_DT,feas_c_DT]=LMI_DT_Stability(F,Gd,Hd,N,ContStruc_Centr); % LMI for stability
  [K_c_DT_perf,rho_c_DT_perf,feas_c_DT_perf]=LMI_DT_Performance(F,Gd,Hd,N,ContStruc_Centr,rho_DT); % LMI for performance
  [K_c_DT_circle,rho_c_DT_circle,feas_c_DT_circle]=LMI_DT_Circle_Area(F,Gd,Hd,N,ContStruc_Centr,center,radius); % LMI for performance
- [K_c_DT_effort,rho_c_DT_effort,feas_c_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Centr);
+ [K_c_DT_effort,rho_c_DT_effort,feas_c_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Centr,alpha_L,alpha_Y);
+ [K_c_DT_H2,rho_c_DT_H2,feas_c_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Centr);
 
 %% Display
  disp('Results (Discrete-time):')
  disp(['-  Centralized: Feasibility=',num2str(feas_c_DT),', rho=',num2str(rho_c_DT),', FM=',num2str(cfm_DT),'.'])
  disp(['-  Centralized_Perf: Feasibility=',num2str(feas_c_DT_perf),', rho=',num2str(rho_c_DT_perf),', FM=',num2str(cfm_DT),'.'])
  disp(['-  Centralized_Circle: Feasibility=',num2str(feas_c_DT_circle),', rho=',num2str(rho_c_DT_circle),', FM=',num2str(cfm_DT),'.'])
+ disp(['-  Centralized_Effort: Feasibility=',num2str(feas_c_DT_effort),', rho=',num2str(rho_c_DT_effort),', FM=',num2str(cfm_DT),'.'])
+ disp(['-  Centralized_H2: Feasibility=',num2str(feas_c_DT_H2),', rho=',num2str(rho_c_DT_H2),', FM=',num2str(cfm_DT),'.'])
 
 %% Plots
 Gtot=[];
@@ -143,15 +145,48 @@ for k=1:Tfinal/Ts
      x_c_DT(:,k)=((F+G*K_c_DT)^k)*x0;
      x_c_DT_perf(:,k)=((F+G*K_c_DT_perf)^k)*x0;
      x_c_DT_circle(:,k)=((F+G*K_c_DT_circle)^k)*x0;
+     x_c_DT_effort(:,k)=((F+G*K_c_DT_effort)^k)*x0;
+     x_c_DT_H2(:,k)=((F+G*K_c_DT_H2)^k)*x0;
 end
 
-Eigen = eig(F+G*K_c_DT_circle)
+eig_DT = eig(F+G*K_c_DT_circle)
 
-figure
+% Creazione della figura
+figure;
+hold on;
+grid on;
+axis equal;
+xlim([-1.2 1.2]);
+ylim([-1.2 1.2]);
+
+% Disegna il cerchio unitario
+theta = linspace(0, 2*pi, 300);
+plot(cos(theta), sin(theta), 'k--', 'LineWidth', 1.5); % Cerchio unitario
+
+% Disegna il cerchio desiderato
+plot(-center + radius * cos(theta), radius * sin(theta), 'r-', 'LineWidth', 1.5); 
+
+% Disegna gli autovalori
+plot(real(eig_DT), imag(eig_DT), 'bx', 'MarkerSize', 10, 'LineWidth', 2);
+
+% Disegna gli assi
+plot([-1.2, 1.2], [0, 0], 'k', 'LineWidth', 1);
+plot([0, 0], [-1.2, 1.2], 'k', 'LineWidth', 1);
+
+% Titolo e legenda
+title('Autovalori e Regione di Collocazione');
+legend({'Cerchio unitario', 'Regione desiderata', 'Autovalori'}, 'Location', 'Best');
+xlabel('Re');
+ylabel('Im');
+
+hold off;
+
+
 % Plotting px1 coordinate for every LMI used
-plot([Ts:Ts:Tfinal],x_c_DT(1,:),[Ts:Ts:Tfinal],x_c_DT_perf(1,:),[Ts:Ts:Tfinal],x_c_DT_circle(1,:))
+figure
+plot([Ts:Ts:Tfinal],x_c_DT(1,:),[Ts:Ts:Tfinal],x_c_DT_perf(1,:),[Ts:Ts:Tfinal],x_c_DT_circle(1,:),[Ts:Ts:Tfinal],x_c_DT_effort(1,:),[Ts:Ts:Tfinal],x_c_DT_H2(1,:))
 title('DT controllers graphs')
 grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area')
+legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
 xlabel('Time (k)')
 ylabel('Position (X)')
