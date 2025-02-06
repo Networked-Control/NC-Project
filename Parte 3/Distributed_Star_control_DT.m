@@ -103,7 +103,7 @@ end
 % Discrete Time
 [K_star_DT,rho_star_DT,feas_star_DT]=LMI_DT_Stability(F,Gd,Hd,N,ContStruc_Distr_star); % LMI for stability
 [K_star_DT_perf,rho_star_DT_perf,feas_star_DT_perf]=LMI_DT_Performance(F,Gd,Hd,N,ContStruc_Distr_star,rho_DT); % LMI for performance
-[K_star_CT_circle,rho_star_CT_circle,feas_star_CT_circle]=LMI_DT_Circle_Area(A,Bd,Cd,N,ContStruc_Distr_star,center,radius) % LMI for circle delimited area
+[K_star_DT_circle,rho_star_CT_circle,feas_star_CT_circle]=LMI_DT_Circle_Area(A,Bd,Cd,N,ContStruc_Distr_star,center,radius) % LMI for circle delimited area
 [K_star_DT_effort,rho_star_DT_effort,feas_star_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Centr,alpha_L,alpha_Y);
 [K_star_DT_H2,rho_star_DT_H2,feas_star_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Centr);
 
@@ -150,11 +150,11 @@ for k=1:Tfinal/Ts
     x_star_DT_H2(:,k)=((F+G*K_star_DT_H2)^k)*x0;
 
     % control variable
-    u_c_DT(:,k) = K_c_DT * x_star_DT(:,k);
-    u_c_DT_perf(:,k) = K_star_DT_perf * x_star_DT_perf(:,k);
-    u_c_DT_circle(:,k) = K_star_DT_circle * x_star_DT_circle(:,k);
-    u_c_DT_effort(:,k) = K_star_DT_effort * x_star_DT_effort(:,k);
-    u_c_DT_H2(:,k) = K_c_DT_H2 * x_star_DT_H2(:,k);
+    u_star_DT(:,k) = K_c_DT * x_star_DT(:,k);
+    u_star_DT_perf(:,k) = K_star_DT_perf * x_star_DT_perf(:,k);
+    u_star_DT_circle(:,k) = K_star_DT_circle * x_star_DT_circle(:,k);
+    u_star_DT_effort(:,k) = K_star_DT_effort * x_star_DT_effort(:,k);
+    u_star_DT_H2(:,k) = K_star_DT_H2 * x_star_DT_H2(:,k);
 end
 
 %% Calcolo autovalori
