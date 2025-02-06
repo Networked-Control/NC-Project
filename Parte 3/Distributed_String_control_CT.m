@@ -150,8 +150,8 @@ for t=T
 
     % state computation
     x_string_free(:,k)=expm(A*t)*x0; % No control
-    x_string_CT(:,k)=expm((A+B*K_c_CT)*t)*x0;
-    x_string_CT_perf(:,k)=expm((A+B*K_c_CT_perf)*t)*x0;
+    x_string_CT(:,k)=expm((A+B*K_string_CT)*t)*x0;
+    x_string_CT_perf(:,k)=expm((A+B*K_string_CT_perf)*t)*x0;
     x_string_CT_sector(:,k)=expm((A+B*K_string_CT_sector)*t)*x0;
     x_string_CT_effort(:,k)=expm((A+B*K_string_CT_effort)*t)*x0;
     x_string_CT_H2(:,k)=expm((A+B*K_string_CT_H2)*t)*x0;

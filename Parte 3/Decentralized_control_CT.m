@@ -146,11 +146,11 @@ for t=T
 
     % state computation
     x_De_free(:,k)=expm(A*t)*x0; % No control
-    x_De_CT(:,k)=expm((A+B*K_c_CT)*t)*x0;
-    x_De_CT_perf(:,k)=expm((A+B*K_c_CT_perf)*t)*x0;
-    x_De_CT_sector(:,k)=expm((A+B*K_c_CT_sector)*t)*x0;
-    x_De_CT_effort(:,k)=expm((A+B*K_c_CT_effort)*t)*x0;
-    x_De_CT_H2(:,k)=expm((A+B*K_c_CT_H2)*t)*x0;
+    x_De_CT(:,k)=expm((A+B*K_De_CT)*t)*x0;
+    x_De_CT_perf(:,k)=expm((A+B*K_De_CT_perf)*t)*x0;
+    x_De_CT_sector(:,k)=expm((A+B*K_De_CT_sector)*t)*x0;
+    x_De_CT_effort(:,k)=expm((A+B*K_De_CT_effort)*t)*x0;
+    x_De_CT_H2(:,k)=expm((A+B*K_De_CT_H2)*t)*x0;
 
     % control variable
     u_De_CT(:,k) = K_De_CT * x_De_CT(:,k);
