@@ -87,10 +87,14 @@ spectral_radius = max(moduli);  % Spectral Radius
 disp(['Spectral Radius: ', num2str(spectral_radius)]);
 
 %% Control Structures
-alpha = 2;  % Must be positive, the negative sign is already considered in the LMI computation
-rho_DT = exp(alpha*Ts);
-center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1;
+alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
+%rho_DT = exp(alpha*Ts);
+rho_DT = 0.88;
+center = -0.5; % Must be positive, the negative sign is already considered in the LMI computation
+radius = 0.1; % center and radius are computed for Circle LMIs
+angle = 45; % Sector LMIs
+alpha_L = 0.1; % Effort LMIs
+alpha_Y = 10; % Effort LMIs
 
 % Distributed LMI Performance
 ContStruc_Distr_star=eye(N);
@@ -104,8 +108,8 @@ end
 [K_star_DT,rho_star_DT,feas_star_DT]=LMI_DT_Stability(F,Gd,Hd,N,ContStruc_Distr_star); % LMI for stability
 [K_star_DT_perf,rho_star_DT_perf,feas_star_DT_perf]=LMI_DT_Performance(F,Gd,Hd,N,ContStruc_Distr_star,rho_DT); % LMI for performance
 [K_star_DT_circle,rho_star_CT_circle,feas_star_CT_circle]=LMI_DT_Circle_Area(A,Bd,Cd,N,ContStruc_Distr_star,center,radius) % LMI for circle delimited area
-[K_star_DT_effort,rho_star_DT_effort,feas_star_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Centr,alpha_L,alpha_Y);
-[K_star_DT_H2,rho_star_DT_H2,feas_star_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Centr);
+[K_star_DT_effort,rho_star_DT_effort,feas_star_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Distr_star,alpha_L,alpha_Y);
+[K_star_DT_H2,rho_star_DT_H2,feas_star_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Distr_star);
 
 %% Display
  disp('Results (Discrete-time):')

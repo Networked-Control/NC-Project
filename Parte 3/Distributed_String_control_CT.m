@@ -88,11 +88,14 @@ spectral_abscissa = max(real_parts_CT);   % Spectral Abscissa
 disp(['Spectral Abscissa: ', num2str(spectral_abscissa)]);
 
 %% Control Structures
-alpha = 2;  % Must be positive, the negative sign is already considered in the LMI computation
-rho_DT = exp(alpha*Ts);
+alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
+%rho_DT = exp(alpha*Ts);
+rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1;
-
+radius = 1; % center and radius are computed for Circle LMIs
+angle = 45; % Sector LMIs
+alpha_L = 10^100; % Effort LMIs
+alpha_Y = 0; % Effort LMIs
 % Distributed LMI Performance
 ContStruc_Distr_string=eye(N);
 for i=1:N-1
@@ -104,9 +107,9 @@ end
 % Continuous Time 
 [K_string_CT,rho_string_CT,feas_string_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Distr_string); % LMI for stability
 [K_string_CT_perf,rho_string_CT_perf,feas_string_CT_perf]=LMI_CT_Performance(A,Bd,Cd,N,ContStruc_Distr_string,alpha); % LMI for performance
-[K_string_CT_sector,rho_string_CT_sector,feas_string_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Centr,angle) % LMI for sector delimited area
-[K_string_CT_effort,rho_string_CT_effort,feas_string_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Centr,alpha_L,alpha_Y) % LMI for sector delimited area
-[K_string_CT_H2,rho_string_CT_H2,feas_string_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
+[K_string_CT_sector,rho_string_CT_sector,feas_string_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Distr_string,angle) % LMI for sector delimited area
+[K_string_CT_effort,rho_string_CT_effort,feas_string_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Distr_string,alpha_L,alpha_Y) % LMI for sector delimited area
+[K_string_CT_H2,rho_string_CT_H2,feas_string_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Distr_string) % LMI for H2
 
 
 %% Display
@@ -157,8 +160,8 @@ for t=T
     x_string_CT_H2(:,k)=expm((A+B*K_string_CT_H2)*t)*x0;
 
     % control variable
-    u_string_CT(:,k) = K_c_CT * x_string_CT(:,k);
-    u_string_CT_perf(:,k) = K_c_CT_perf * x_string_CT_perf(:,k);
+    u_string_CT(:,k) = K_string_CT * x_string_CT(:,k);
+    u_string_CT_perf(:,k) = K_string_CT_perf * x_string_CT_perf(:,k);
     u_string_CT_sector(:,k) = K_string_CT_sector * x_string_CT_sector(:,k);
     u_string_CT_effort(:,k) = K_string_CT_effort * x_string_CT_effort(:,k);
     u_string_CT_H2(:,k) = K_string_CT_H2 * x_string_CT_H2(:,k);

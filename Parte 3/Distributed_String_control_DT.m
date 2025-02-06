@@ -87,10 +87,14 @@ spectral_radius = max(moduli);  % Spectral Radius
 disp(['Spectral Radius: ', num2str(spectral_radius)]);
 
 %% Control Structures
-alpha = 2;  % Must be positive, the negative sign is already considered in the LMI computation
-rho_DT = exp(alpha*Ts);
-center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1;
+alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
+%rho_DT = exp(alpha*Ts);
+rho_DT = 0.88;
+center = -0.5; % Must be positive, the negative sign is already considered in the LMI computation
+radius = 0.1; % center and radius are computed for Circle LMIs
+angle = 45; % Sector LMIs
+alpha_L = 0.1; % Effort LMIs
+alpha_Y = 10; % Effort LMIs
 
 % Distributed LMI Performance
 ContStruc_Distr_string=eye(N);
@@ -103,9 +107,9 @@ end
 % Discrete Time
 [K_string_DT,rho_string_DT,feas_string_DT]=LMI_DT_Stability(F,Gd,Hd,N,ContStruc_Distr_string); % LMI for stability
 [K_string_DT_perf,rho_string_DT_perf,feas_string_DT_perf]=LMI_DT_Performance(F,Gd,Hd,N,ContStruc_Distr_string,rho_DT); % LMI for performance
-[K_string_DT_circle,rho_string_DT_circle,feas_string_DT_circle]=LMI_DT_Circle_Area(F,Gd,Hd,N,ContStruc_Centr,center,radius); % LMI for performance
-[K_string_DT_effort,rho_string_DT_effort,feas_string_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Centr,alpha_L,alpha_Y);
-[K_string_DT_H2,rho_string_DT_H2,feas_string_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Centr);
+[K_string_DT_circle,rho_string_DT_circle,feas_string_DT_circle]=LMI_DT_Circle_Area(F,Gd,Hd,N,ContStruc_Distr_string,center,radius); % LMI for performance
+[K_string_DT_effort,rho_string_DT_effort,feas_string_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Distr_string,alpha_L,alpha_Y);
+[K_string_DT_H2,rho_string_DT_H2,feas_string_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Distr_string);
 
 
 %% Display

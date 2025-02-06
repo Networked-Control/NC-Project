@@ -48,6 +48,9 @@ else
         ninc=0;
         for j=1:N
             if ContStruc(i,j)==0
+                disp(['i=', num2str(i), ', j=', num2str(j)]);
+                disp(['minc=', num2str(minc), ', m(i)=', num2str(m(i))]);
+                disp(['ninc=', num2str(ninc), ', n(j)=', num2str(n(j))]);
                 L(minc+1:minc+m(i),ninc+1:ninc+n(j))=zeros(m(i),n(j));
             end
             ninc=ninc+n(j);
