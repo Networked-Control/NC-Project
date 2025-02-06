@@ -105,7 +105,7 @@ ContStruc_Centr = ones(N,N);
  [K_c_DT,rho_c_DT,feas_c_DT]=LMI_DT_Stability(F,Gd,Hd,N,ContStruc_Centr); % LMI for stability
  [K_c_DT_perf,rho_c_DT_perf,feas_c_DT_perf]=LMI_DT_Performance(F,Gd,Hd,N,ContStruc_Centr,rho_DT); % LMI for performance
  [K_c_DT_circle,rho_c_DT_circle,feas_c_DT_circle]=LMI_DT_Circle_Area(F,Gd,Hd,N,ContStruc_Centr,center,radius); % LMI for performance
-
+ [K_c_DT_effort,rho_c_DT_effort,feas_c_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Centr);
 
 %% Display
  disp('Results (Discrete-time):')

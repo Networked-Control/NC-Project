@@ -118,13 +118,14 @@ end
 [star_fm_DT]=di_fixed_modes(F,Gd,Hd,N,ContStruc_Distr_star,3);
 
 % Continuous Time 
-[K_star_CT,rho_star_CT,feas_star_CT]=LMI_CT_DeDicont(A,Bd,Cd,N,ContStruc_Distr_star); % LMI for stability
-[K_star_CT_perf,rho_star_CT_perf,feas_star_CT_perf]=LMI_CT_DeDicont_perf(A,Bd,Cd,N,ContStruc_Distr_star,alpha); % LMI for performance
-[K_star_CT_circle,rho_star_CT_circle,feas_star_CT_circle]=LMI_Circle_Area_CT(A,Bd,Cd,N,ContStruc_Distr_star,center,radius) % LMI for circle delimited area
+[K_star_CT,rho_star_CT,feas_star_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Distr_star); % LMI for stability
+[K_star_CT_perf,rho_star_CT_perf,feas_star_CT_perf]=LMI_CT_Performance(A,Bd,Cd,N,ContStruc_Distr_star,alpha); % LMI for performance
+%[K_star_CT_circle,rho_star_CT_circle,feas_star_CT_circle]=LMI_Circle_Area_CT(A,Bd,Cd,N,ContStruc_Distr_star,center,radius) % LMI for circle delimited area
 
 % Discrete Time
-[K_star_DT,rho_star_DT,feas_star_DT]=LMI_DT_DeDicont(F,Gd,Hd,N,ContStruc_Distr_star); % LMI for stability
-[K_star_DT_perf,rho_star_DT_perf,feas_star_DT_perf]=LMI_DT_DeDicont_perf(F,Gd,Hd,N,ContStruc_Distr_star,rho_DT); % LMI for performance
+[K_star_DT,rho_star_DT,feas_star_DT]=LMI_DT_Stability(F,Gd,Hd,N,ContStruc_Distr_star); % LMI for stability
+[K_star_DT_perf,rho_star_DT_perf,feas_star_DT_perf]=LMI_DT_Performance(F,Gd,Hd,N,ContStruc_Distr_star,rho_DT); % LMI for performance
+[K_star_CT_circle,rho_star_CT_circle,feas_star_CT_circle]=LMI_DT_Circle_Area(A,Bd,Cd,N,ContStruc_Distr_star,center,radius) % LMI for circle delimited area
 
 %% Display
 
