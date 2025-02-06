@@ -90,8 +90,8 @@ disp(['Spectral Radius: ', num2str(spectral_radius)]);
 alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
 %rho_DT = exp(alpha*Ts);
 rho_DT = 0.88;
-center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1; % center and radius are computed for Circle LMIs
+center = -0.5; % Must be positive, the negative sign is already considered in the LMI computation
+radius = 0.1; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
 alpha_L = 10^100; % Effort LMIs
 alpha_Y = 0; % Effort LMIs
@@ -144,6 +144,8 @@ for k=1:Tfinal/Ts
      x_c_DT_perf(:,k)=((F+G*K_c_DT_perf)^k)*x0;
      x_c_DT_circle(:,k)=((F+G*K_c_DT_circle)^k)*x0;
 end
+
+Eigen = eig(F+G*K_c_DT_circle)
 
 figure
 % Plotting px1 coordinate for every LMI used
