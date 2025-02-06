@@ -88,10 +88,15 @@ spectral_abscissa = max(real_parts_CT);   % Spectral Abscissa
 disp(['Spectral Abscissa: ', num2str(spectral_abscissa)]);
 
 %% Control Structures
-alpha = 2;  % Must be positive, the negative sign is already considered in the LMI computation
-rho_DT = exp(alpha*Ts);
+alpha = 1;
+%rho_DT = exp(alpha*Ts);
+rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1;
+radius = 1; % center and radius are computed for Circle LMIs
+angle = 45; % Sector LMIs
+alpha_L = 10^100; % Effort LMIs
+alpha_Y = 0; % Effort LMIs
+
 
 % Distributed LMI Performance
 ContStruc_Distr_star=eye(N);
@@ -104,9 +109,9 @@ end
 % Continuous Time 
 [K_star_CT,rho_star_CT,feas_star_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Distr_star); % LMI for stability
 [K_star_CT_perf,rho_star_CT_perf,feas_star_CT_perf]=LMI_CT_Performance(A,Bd,Cd,N,ContStruc_Distr_star,alpha); % LMI for performance
-[K_star_CT_sector,rho_star_CT_sector,feas_star_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Centr,angle) % LMI for sector delimited area
-[K_star_CT_effort,rho_star_CT_effort,feas_star_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Centr,alpha_L,alpha_Y) % LMI for sector delimited area
-[K_star_CT_H2,rho_star_CT_H2,feas_star_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
+[K_star_CT_sector,rho_star_CT_sector,feas_star_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Distr_star,angle) % LMI for sector delimited area
+[K_star_CT_effort,rho_star_CT_effort,feas_star_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Distr_star,alpha_L,alpha_Y) % LMI for sector delimited area
+[K_star_CT_H2,rho_star_CT_H2,feas_star_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Distr_star) % LMI for H2
 
 %% Display
 
@@ -149,15 +154,15 @@ for t=T
 
     % state computation
     x_star_free(:,k)=expm(A*t)*x0; % No control
-    x_star_CT(:,k)=expm((A+B*K_c_CT)*t)*x0;
-    x_star_CT_perf(:,k)=expm((A+B*K_c_CT_perf)*t)*x0;
+    x_star_CT(:,k)=expm((A+B*K_star_CT)*t)*x0;
+    x_star_CT_perf(:,k)=expm((A+B*K_star_CT_perf)*t)*x0;
     x_star_CT_sector(:,k)=expm((A+B*K_star_CT_sector)*t)*x0;
     x_star_CT_effort(:,k)=expm((A+B*K_star_CT_effort)*t)*x0;
     x_star_CT_H2(:,k)=expm((A+B*K_star_CT_H2)*t)*x0;
 
     % control variable
-    u_star_CT(:,k) = K_c_CT * x_star_CT(:,k);
-    u_star_CT_perf(:,k) = K_c_CT_perf * x_star_CT_perf(:,k);
+    u_star_CT(:,k) = K_star_CT * x_star_CT(:,k);
+    u_star_CT_perf(:,k) = K_star_CT_perf * x_star_CT_perf(:,k);
     u_star_CT_sector(:,k) = K_star_CT_sector * x_star_CT_sector(:,k);
     u_star_CT_effort(:,k) = K_star_CT_effort * x_star_CT_effort(:,k);
     u_star_CT_H2(:,k) = K_star_CT_H2 * x_star_CT_H2(:,k);
@@ -166,7 +171,7 @@ end
 % Continuous Time figure
 % Primo grafico: posizione lungo X
 figure
-plot(T, x_c_free(1,:),T, x_star_CT(1,:), T, x_star_CT_perf(1,:), T, x_star_CT_sector(1,:),T,x_star_CT_effort(1,:),T,x_star_CT_H2(1,:)) % Position of the first Mass along x direction
+plot(T, x_star_free(1,:),T, x_star_CT(1,:), T, x_star_CT_perf(1,:), T, x_star_CT_sector(1,:),T,x_star_CT_effort(1,:),T,x_star_CT_H2(1,:)) % Position of the first Mass along x direction
 title('CT controller Position in X')  
 grid on
 legend('No control','CT Stability', 'CT Performance', 'CT Sector', 'CT Effort', 'CT H2') % Aggiunge la legenda
@@ -175,7 +180,7 @@ ylabel('Position (X)') % Etichetta dell'asse y
 
 % Secondo grafico: posizione lungo Y
 figure
-plot(T, x_c_free(3,:),T, x_star_CT(3,:), T, x_star_CT_perf(3,:), T, x_star_CT_sector(3,:),T, x_star_CT_effort(3,:),T, x_star_CT_H2(3,:)) % Position of the first Mass along y direction
+plot(T, x_star_free(3,:),T, x_star_CT(3,:), T, x_star_CT_perf(3,:), T, x_star_CT_sector(3,:),T, x_star_CT_effort(3,:),T, x_star_CT_H2(3,:)) % Position of the first Mass along y direction
 title('CT controllers Position in Y')
 grid on
 legend('No control','CT Stability', 'CT Performance', 'CT Sector','CT Effort', 'CT H2') % Aggiunge la legenda
