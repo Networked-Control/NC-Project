@@ -17,28 +17,21 @@ function [K,rho,feas]=LMI_DT_H2(F,G,H,N,ContStruc)
 % - rho: spectral abscissa of matrix (A+B*K) - note that [C{1}',...,
 % C{N}']=I
 % - feas: feasibility of the LMI problem (=0 if yes)
-Btot=[];
-
-for i=1:N
-    Gdec{i}=G(:,i);
-    Hdec{i}=(H(2*(i-1)+1:2*i,:))';
-end
-
 Gtot=[];
 for i=1:N
-    m(i)=size(Gdec{i},2);
-    n(i)=size(Hdec{i},2);
-    Gtot=[Gtot,Gdec{i}];
+    m(i)=size(G{i},2);
+    n(i)=size(H{i},2);
+    Gtot=[Gtot,G{i}];
 end
 ntot=size(F,1);
 mtot=sum(m);
 
-R_sqrt= [1 0 0;
-        0 1 0;
-        0 0 1];
+R_sqrt= eye(18);
 
-H_H2 = [eye(6);zeros(3,6)];
-D_H2 = [zeros(6,3);R_sqrt];
+ H_H2 = [eye(36);zeros(18,36)];
+ disp(H_H2);
+ D_H2 = [zeros(36,18);R_sqrt];
+ disp(D_H2)
 
 
 yalmip clear
@@ -69,7 +62,12 @@ end
 
 LMIconstr=[[P-F*P*F'-F*L'*Gtot'-Gtot*L*F' Gtot*L;
         L'*Gtot' P]>=1e-1*eye(ntot*2)];
-H2_constr = [S H_H2*P + D_H2*L; L'*D_H2' + P*H_H2' P] >= 1e-2*(eye(15));
+H2_constr = [S H_H2*P + D_H2*L; L'*D_H2' + P*H_H2' P];
+
+% Determina la dimensione della matrice H2_constr
+[n, ~] = size(H2_constr); % n è il numero di righe
+
+H2_constrain = (H2_constr >= 1e-2 * eye(n));
 
 objective_function = trace(S);
 
