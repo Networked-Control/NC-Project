@@ -157,6 +157,7 @@ for k=1:Tfinal/Ts
     u_c_DT_H2(:,k) = K_c_DT_H2 * x_c_DT_H2(:,k);
 end
 
+%% Calcolo autovalori
 eig_DT = eig(F+G*K_c_DT_circle)
 
 %% Creazione della figura

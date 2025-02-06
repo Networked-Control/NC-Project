@@ -139,16 +139,25 @@ x0 = repmat(random_number,36,1);
 
 k = 0;
 for k=1:Tfinal/Ts
-     x_De_DT(:,k)=((F+G*K_c_DT)^k)*x0;
-     x_De_DT_perf(:,k)=((F+G*K_c_DT_perf)^k)*x0;
-     x_De_DT_circle(:,k)=((F+G*K_c_DT_circle)^k)*x0;
-     x_De_DT_effort(:,k)=((F+G*K_c_DT_effort)^k)*x0;
-     x_De_DT_H2(:,k)=((F+G*K_De_DT_H2)^k)*x0;
+    % state variable
+    x_De_DT(:,k)=((F+G*K_De_DT)^k)*x0;
+    x_De_DT_perf(:,k)=((F+G*K_De_DT_perf)^k)*x0;
+    x_De_DT_circle(:,k)=((F+G*K_De_DT_circle)^k)*x0;
+    x_De_DT_effort(:,k)=((F+G*K_De_DT_effort)^k)*x0;
+    x_De_DT_H2(:,k)=((F+G*K_De_DT_H2)^k)*x0;
+
+    % control variable
+    u_De_DT(:,k) = K_c_DT * x_c_DT(:,k);
+    u_De_DT_perf(:,k) = K_De_DT_perf * x_c_DT_perf(:,k);
+    u_De_DT_circle(:,k) = K_De_DT_circle * x_c_DT_circle(:,k);
+    u_De_DT_effort(:,k) = K_De_DT_effort * x_c_DT_effort(:,k);
+    u_De_DT_H2(:,k) = K_c_DT_H2 * x_De_DT_H2(:,k);
 end
 
-eig_DT = eig(F+G*K_c_DT_circle)
+%% Calcolo autovalori
+eig_DT = eig(F+G*K_De_DT_circle)
 
-% Creazione della figura
+%% Creazione della figura
 figure;
 hold on;
 grid on;
@@ -179,11 +188,38 @@ ylabel('Im');
 hold off;
 
 
-% Plotting px1 coordinate for every LMI used
+%% Plotting px1 coordinate for every LMI used
 figure
 plot([Ts:Ts:Tfinal],x_De_DT(1,:),[Ts:Ts:Tfinal],x_De_DT_perf(1,:),[Ts:Ts:Tfinal],x_De_DT_circle(1,:),[Ts:Ts:Tfinal],x_De_DT_effort(1,:),[Ts:Ts:Tfinal],x_De_DT_H2(1,:))
-title('DT controllers graphs')
+title('DT controller Position in X')
 grid on
 legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
 xlabel('Time (k)')
 ylabel('Position (X)')
+
+%% Plotting py1 coordinate for every LMI used
+figure
+plot([Ts:Ts:Tfinal],x_De_DT(3,:),[Ts:Ts:Tfinal],x_De_DT_perf(3,:),[Ts:Ts:Tfinal],x_De_DT_circle(3,:),[Ts:Ts:Tfinal],x_De_DT_effort(3,:),[Ts:Ts:Tfinal],x_De_DT_H2(3,:))
+title('DT controller Position in Y')
+grid on
+legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+xlabel('Time (k)')
+ylabel('Position (Y)')
+
+%% Plotting ux control effort for every LMI used
+figure
+plot([Ts:Ts:Tfinal],u_De_DT(1,:),[Ts:Ts:Tfinal],u_De_DT_perf(1,:),[Ts:Ts:Tfinal],u_De_DT_circle(1,:),[Ts:Ts:Tfinal],u_De_DT_effort(1,:),[Ts:Ts:Tfinal],u_De_DT_H2(1,:))
+title('DT control variable in X')
+grid on
+legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+xlabel('Time (k)')
+ylabel('Control U(x)')
+
+%% Plotting uy control effort for every LMI used
+figure
+plot([Ts:Ts:Tfinal],u_De_DT(2,:),[Ts:Ts:Tfinal],u_De_DT_perf(2,:),[Ts:Ts:Tfinal],u_De_DT_circle(2,:),[Ts:Ts:Tfinal],u_De_DT_effort(2,:),[Ts:Ts:Tfinal],u_De_DT_H2(2,:))
+title('DT control variable in Y')
+grid on
+legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+xlabel('Time (k)')
+ylabel('Control U(y)')
