@@ -45,7 +45,7 @@ else
 end
 
 % LMI Constraints
-LMIconstr=[Y*A'+A*Y+Btot*L+L'*Btot'+eye(ntot)<=-1e-2*eye(ntot), Y>=1e-2*eye(ntot)];
+LMIconstr=[Y*A'+A*Y+Btot*L+L'*Btot'+eye(ntot)+ W*W <=-1e-2*eye(ntot), Y>=1e-2*eye(ntot)];
 
 % H2 Constraint
 H2_constr = [S C_H2*Y + D_H2*L; L'*D_H2' + Y*C_H2' Y];
