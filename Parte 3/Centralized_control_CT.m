@@ -131,6 +131,46 @@ for i=1:N
         Hd{i}];
 end
 
+%% Calcolo autovalori
+eig_CT = eig(F+G*K_c_CT_Sector)
+
+%% Creazione della figura
+figure;
+hold on;
+grid on;
+axis equal;
+xlim([-1.2 1.2]);
+ylim([-1.2 1.2]);
+
+% Define the number of points along the lines
+num_points = 100;
+t = linspace(0, 5, num_points);  % This generates points for the line
+
+% First line: make sure the real part is negative
+z1 = -t .* (cos(angle) + 1i * sin(angle));  % Negative real part
+
+% Second line: make sure the real part is negative
+z2 = -t .* (cos(angle + pi) + 1i * sin(angle + pi));  % Negative real part
+
+plot(real(z1), imag(z1), 'b', 'LineWidth', 2); % Blue line for the first
+hold on;
+plot(real(z2), imag(z2), 'r', 'LineWidth', 2); % Red line for the second
+
+% Plot Eigenvalues
+plot(real(eig_CT), imag(eig_CT), 'bx', 'MarkerSize', 10, 'LineWidth', 2);
+
+% Draw axis
+plot([-1.2, 1.2], [0, 0], 'k', 'LineWidth', 1);
+plot([0, 0], [-1.2, 1.2], 'k', 'LineWidth', 1);
+
+% Titolo e legenda
+title('Autovalori e Regione di Collocazione');
+legend({'Cerchio unitario', 'Regione desiderata', 'Autovalori'}, 'Location', 'Best');
+xlabel('Re');
+ylabel('Im');
+
+hold off;
+
 %% Simulation data
 Tfinal=10;
 T=0:0.01:Tfinal;
