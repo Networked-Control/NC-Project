@@ -204,24 +204,30 @@ ylabel('Control action (U(y))') % Etichetta dell'asse y
 %% Grafico delle posizioni di tutte le masse
 % Grafico posizioni x
 figure
-title('All masses X positions')
+hold on
 for i=1:4:33
-    plot(T,x_c_CT(i,:))
-    legend('x'num2str(i))
-    hold on
+    variable = 'x';
+    numb = num2str(ceil(i/4));
+    z = [variable, numb];
+    plot(T,x_c_CT(i,:), 'DisplayName', z )   
 end
 grid on
+legend show
+title('All masses X positions')
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (X)') % Etichetta dell'asse y
 
 % Grafico posizioni y
 figure
-title('All masses X positions')
+hold on
 for i=3:4:35
-    plot(T,x_c_CT(i,:))
-    legend('y'num2str(i))
-    hold on
+    variable = 'y';
+    numb = num2str(ceil(i/4));
+    z = [variable, numb];
+    plot(T,x_c_CT(i,:), 'DisplayName', z)    
 end
 grid on
+legend show
+title('All masses Y positions')
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (Y)') % Etichetta dell'asse y
