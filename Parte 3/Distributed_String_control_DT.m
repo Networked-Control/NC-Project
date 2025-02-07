@@ -91,7 +91,7 @@ alpha = 1;  % Must be positive, the negative sign is already considered in the L
 %rho_DT = exp(alpha*Ts);
 rho_DT = 0.88;
 center = -0.5; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 0.1; % center and radius are computed for Circle LMIs
+radius = 0.45; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
 alpha_L = 0.1; % Effort LMIs
 alpha_Y = 10; % Effort LMIs
@@ -155,11 +155,11 @@ for k=1:Tfinal/Ts
     x_string_DT_H2(:,k)=((F+G*K_string_DT_H2)^k)*x0;
 
     % control variable
-    u_string_DT(:,k) = K_c_DT * x_c_DT(:,k);
-    u_string_DT_perf(:,k) = K_c_DT_perf * x_c_DT_perf(:,k);
-    u_string_DT_circle(:,k) = K_c_DT_circle * x_c_DT_circle(:,k);
-    u_string_DT_effort(:,k) = K_c_DT_effort * x_c_DT_effort(:,k);
-    u_string_DT_H2(:,k) = K_c_DT_H2 * x_c_DT_H2(:,k);
+    u_string_DT(:,k) = K_string_DT * x_string_DT(:,k);
+    u_string_DT_perf(:,k) = K_string_DT_perf * x_string_DT_perf(:,k);
+    u_string_DT_circle(:,k) = K_string_DT_circle * x_string_DT_circle(:,k);
+    u_string_DT_effort(:,k) = K_string_DT_effort * x_string_DT_effort(:,k);
+    u_string_DT_H2(:,k) = K_string_DT_H2 * x_string_DT_H2(:,k);
 end
 
 %% Calcolo autovalori
@@ -210,7 +210,7 @@ figure
 plot([Ts:Ts:Tfinal],x_string_DT(3,:),[Ts:Ts:Tfinal],x_string_DT_perf(3,:),[Ts:Ts:Tfinal],x_string_DT_circle(3,:),[Ts:Ts:Tfinal],x_string_DT_effort(3,:),[Ts:Ts:Tfinal],x_string_DT_H2(3,:))
 title('DT controller Position in Y')
 grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+legend('DT Stability', 'DT Performance', 'DT Circle Area','DT Effort', 'DT H2')
 xlabel('Time (k)')
 ylabel('Position (Y)')
 
@@ -219,7 +219,7 @@ figure
 plot([Ts:Ts:Tfinal],u_string_DT(1,:),[Ts:Ts:Tfinal],u_string_DT_perf(1,:),[Ts:Ts:Tfinal],u_string_DT_circle(1,:),[Ts:Ts:Tfinal],u_string_DT_effort(1,:),[Ts:Ts:Tfinal],u_string_DT_H2(1,:))
 title('DT control variable in X')
 grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+legend('DT Stability', 'DT Performance', 'DT Circle Area','DT Effort', 'DT H2')
 xlabel('Time (k)')
 ylabel('Control U(x)')
 
@@ -228,6 +228,6 @@ figure
 plot([Ts:Ts:Tfinal],u_string_DT(2,:),[Ts:Ts:Tfinal],u_string_DT_perf(2,:),[Ts:Ts:Tfinal],u_string_DT_circle(2,:),[Ts:Ts:Tfinal],u_string_DT_effort(2,:),[Ts:Ts:Tfinal],u_string_DT_H2(2,:))
 title('DT control variable in Y')
 grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+legend('DT Stability', 'DT Performance', 'DT Circle Area','DT Effort', 'DT H2')
 xlabel('Time (k)')
 ylabel('Control U(y)')
