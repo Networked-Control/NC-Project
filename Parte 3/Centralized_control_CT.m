@@ -131,7 +131,7 @@ for i=1:N
         Hd{i}];
 end
 
-% simulation data
+%% Simulation data
 Tfinal=10;
 T=0:0.01:Tfinal;
 % Random initial condition 
@@ -163,7 +163,7 @@ for t=T
     u_c_CT_H2(:,k) = K_c_CT_H2 * x_c_CT_H2(:,k);
 end
 
-% Continuous Time figure
+%% Continuous Time figure
 % Primo grafico: posizione lungo X
 figure
 plot(T, x_c_free(1,:),T, x_c_CT(1,:), T, x_c_CT_perf(1,:), T, x_c_CT_sector(1,:),T,x_c_CT_effort(1,:),T,x_c_CT_H2(1,:)) % Position of the first Mass along x direction
@@ -199,4 +199,27 @@ legend('CT Stability', 'CT Performance', 'CT Sector','CT Effort', 'CT H2') % Agg
 xlabel('Time (s)') % Etichetta dell'asse y
 ylabel('Control action (U(y))') % Etichetta dell'asse y
 
-%Eigen = eig(A-B*K_c_CT_effort)
+%Eigen = eig(A+B*K_c_CT_effort)
+
+%% Grafico delle posizioni di tutte le masse
+% Grafico posizioni x
+figure
+title('All masses X positions')
+for i=1:4:33
+    plot(T,x_c_CT(i,:))
+    legend('x'num2str(i))
+end
+grid on
+xlabel('Time (s)') % Etichetta dell'asse x
+ylabel('Position (X)') % Etichetta dell'asse y
+
+% Grafico posizioni y
+figure
+title('All masses X positions')
+for i=3:4:35
+    plot(T,x_c_CT(i,:))
+    legend('y'num2str(i))
+end
+grid on
+xlabel('Time (s)') % Etichetta dell'asse x
+ylabel('Position (Y)') % Etichetta dell'asse y

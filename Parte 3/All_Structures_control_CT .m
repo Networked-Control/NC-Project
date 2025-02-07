@@ -221,4 +221,4 @@ legend('Centralized CT', 'Decentralized CT', 'Star CT', 'String CT') % Aggiunge 
 xlabel('Time (s)') % Etichetta dell'asse y
 ylabel('Control action (U(y))') % Etichetta dell'asse y
 
-%Eigen = eig(A-B*K_c_CT_effort)
+%Eigen = eig(A+B*K_c_CT_effort)
