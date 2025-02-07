@@ -87,10 +87,14 @@ spectral_radius = max(moduli);  % Spectral Radius
 disp(['Spectral Radius: ', num2str(spectral_radius)]);
 
 %% Control Structures
-alpha = 2;  % Must be positive, the negative sign is already considered in the LMI computation
-rho_DT = exp(alpha*Ts);
-center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1;
+alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
+%rho_DT = exp(alpha*Ts);
+rho_DT = 0.88;
+center = -0.6; % Must be positive, the negative sign is already considered in the LMI computation
+radius = 0.45; % center and radius are computed for Circle LMIs
+angle = 45; % Sector LMIs
+alpha_L = 0.1; % Effort LMIs
+alpha_Y = 10; % Effort LMIs
 
 % Distributed LMI Performance
 ContStruc_Distr_star=eye(N);
@@ -104,16 +108,16 @@ end
 [K_star_DT,rho_star_DT,feas_star_DT]=LMI_DT_Stability(F,Gd,Hd,N,ContStruc_Distr_star); % LMI for stability
 [K_star_DT_perf,rho_star_DT_perf,feas_star_DT_perf]=LMI_DT_Performance(F,Gd,Hd,N,ContStruc_Distr_star,rho_DT); % LMI for performance
 [K_star_DT_circle,rho_star_CT_circle,feas_star_CT_circle]=LMI_DT_Circle_Area(A,Bd,Cd,N,ContStruc_Distr_star,center,radius) % LMI for circle delimited area
-[K_star_DT_effort,rho_star_DT_effort,feas_star_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Centr,alpha_L,alpha_Y);
-[K_star_DT_H2,rho_star_DT_H2,feas_star_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Centr);
+[K_star_DT_effort,rho_star_DT_effort,feas_star_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Distr_star,alpha_L,alpha_Y);
+[K_star_DT_H2,rho_star_DT_H2,feas_star_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Distr_star);
 
 %% Display
  disp('Results (Discrete-time):')
- disp(['-  Distributed_Star_DT: Feasibility=',num2str(feas_star_DT),', rho=',num2str(rho_star_DT),', FM=',num2str(star_cfm_DT),'.'])
- disp(['-  Distributed_Star_DT_Perf: Feasibility=',num2str(feas_star_DT_perf),', rho=',num2str(rho_star_DT_perf),', FM=',num2str(star_cfm_DT),'.'])
- disp(['-  Distributed_Star_DT_Circle: Feasibility=',num2str(feas_star_CT_circle),', rho=',num2str(rho_star_CT_circle),', FM=',num2str(star_cfm_DT),'.'])
- disp(['-  Distributed_Star_DT_Effort: Feasibility=',num2str(feas_star_DT_effort),', rho=',num2str(rho_star_DT_effort),', FM=',num2str(star_cfm_DT),'.'])
- disp(['-  Distributed_Star_DT_H2: Feasibility=',num2str(feas_star_DT_H2),', rho=',num2str(rho_star_DT_H2),', FM=',num2str(star_cfm_DT),'.'])
+ disp(['-  Distributed_Star_DT: Feasibility=',num2str(feas_star_DT),', rho=',num2str(rho_star_DT),', FM=',num2str(star_fm_DT),'.'])
+ disp(['-  Distributed_Star_DT_Perf: Feasibility=',num2str(feas_star_DT_perf),', rho=',num2str(rho_star_DT_perf),', FM=',num2str(star_fm_DT),'.'])
+ disp(['-  Distributed_Star_DT_Circle: Feasibility=',num2str(feas_star_CT_circle),', rho=',num2str(rho_star_CT_circle),', FM=',num2str(star_fm_DT),'.'])
+ disp(['-  Distributed_Star_DT_Effort: Feasibility=',num2str(feas_star_DT_effort),', rho=',num2str(rho_star_DT_effort),', FM=',num2str(star_fm_DT),'.'])
+ disp(['-  Distributed_Star_DT_H2: Feasibility=',num2str(feas_star_DT_H2),', rho=',num2str(rho_star_DT_H2),', FM=',num2str(star_fm_DT),'.'])
 
 %% Plots
 Gtot=[];
@@ -150,7 +154,7 @@ for k=1:Tfinal/Ts
     x_star_DT_H2(:,k)=((F+G*K_star_DT_H2)^k)*x0;
 
     % control variable
-    u_star_DT(:,k) = K_c_DT * x_star_DT(:,k);
+    u_star_DT(:,k) = K_star_DT * x_star_DT(:,k);
     u_star_DT_perf(:,k) = K_star_DT_perf * x_star_DT_perf(:,k);
     u_star_DT_circle(:,k) = K_star_DT_circle * x_star_DT_circle(:,k);
     u_star_DT_effort(:,k) = K_star_DT_effort * x_star_DT_effort(:,k);

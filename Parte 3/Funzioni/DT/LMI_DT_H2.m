@@ -20,7 +20,7 @@ function [K,rho,feas]=LMI_DT_H2(F,G,H,N,ContStruc)
 Gtot=[];
 for i=1:N
     m(i)=size(G{i},2);
-    n(i)=size(H{i},2);
+    n(i)=size(H{i},1);
     Gtot=[Gtot,G{i}];
 end
 ntot=size(F,1);

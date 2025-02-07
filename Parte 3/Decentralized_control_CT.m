@@ -88,10 +88,14 @@ spectral_abscissa = max(real_parts_CT);   % Spectral Abscissa
 disp(['Spectral Abscissa: ', num2str(spectral_abscissa)]);
 
 %% Control Structures
-alpha = 2;  % Must be positive, the negative sign is already considered in the LMI computation
-rho_DT = exp(alpha*Ts);
+alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
+%rho_DT = exp(alpha*Ts);
+rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1;
+radius = 1; % center and radius are computed for Circle LMIs
+angle = 45; % Sector LMIs
+alpha_L = 10^100; % Effort LMIs
+alpha_Y = 0; % Effort LMIs
 
 % Decentralized LMI Performance
 ContStruc_Dec = diag(ones(N,1));
@@ -101,9 +105,9 @@ ContStruc_Dec = diag(ones(N,1));
 [K_De_CT,rho_De_CT,feas_De_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Dec); % LMI for stability
 [K_De_CT_perf,rho_De_CT_perf,feas_De_CT_perf]=LMI_CT_Performance(A,Bd,Cd,N,ContStruc_Dec,alpha); % LMI for performance
 %[K_De_CT_circle,rho_De_CT_circle,feas_De_CT_circle]=LMI_Circle_Area_CT(A,Bd,Cd,N,ContStruc_Dec,center,radius) % LMI for circle delimited area
-[K_De_CT_sector,rho_De_CT_sector,feas_De_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Centr,angle) % LMI for sector delimited area
-[K_De_CT_effort,rho_De_CT_effort,feas_De_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Centr,alpha_L,alpha_Y) % LMI for sector delimited area
-[K_De_CT_H2,rho_De_CT_H2,feas_De_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
+[K_De_CT_sector,rho_De_CT_sector,feas_De_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Dec,angle) % LMI for sector delimited area
+[K_De_CT_effort,rho_De_CT_effort,feas_De_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Dec,alpha_L,alpha_Y) % LMI for sector delimited area
+[K_De_CT_H2,rho_De_CT_H2,feas_De_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Dec) % LMI for H2
 
 %% Display
 

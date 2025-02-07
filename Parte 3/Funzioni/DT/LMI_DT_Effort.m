@@ -20,7 +20,7 @@ function [K,rho,feas,k_L,k_Y]=LMI_DT_effort(F,G,H,N,ContStruc,alpha_L,alpha_Y)
 Gtot=[];
 for i=1:N
     m(i)=size(G{i},2);
-    n(i)=size(H{i},2);
+    n(i)=size(H{i},1);
     Gtot=[Gtot,G{i}];
 end
 ntot=size(F,1);
@@ -28,10 +28,8 @@ mtot=sum(m);
 
 yalmip clear
 
-k_L =sdpvar;
-k_L_sqrt = sqrt(k_L);
+k_L = sdpvar;
 k_Y = sdpvar;
-
 
 
 if ContStruc==ones(N,N)
@@ -62,7 +60,7 @@ end
     LMIconstr=[[P-F*P*F'-F*L'*Gtot'-Gtot*L*F' Gtot*L;
         L'*Gtot' P]>=1e-1*eye(ntot*2)];
 
-    constr_1 = [[k_L_sqrt*eye(ntot) L';L eye(mtot)]>=1e-1*eye(ntot+mtot)];
+    constr_1 = [[sqrt(k_L)*eye(ntot) L';L eye(mtot)]>=1e-1*eye(ntot+mtot)];
 
     constr_2 = [[k_Y*eye(ntot) eye(ntot);eye(ntot) P]>=1e-2*eye(ntot*2)];
 
