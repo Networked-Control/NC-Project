@@ -93,7 +93,7 @@ alpha = 10;  % Must be positive, the negative sign is already considered in the 
 rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1; % center and radius are computed for Circle LMIs
-angle = 30; % Sector LMIs
+angle = -10; % Sector LMIs
 alpha_L = 0.1; % Effort LMIs
 alpha_Y = 100; % Effort LMIs
 
@@ -111,7 +111,7 @@ ContStruc_Centr = ones(N,N);
 %% Effort 
  [K_c_CT_effort,rho_c_CT_effort,feas_c_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Centr,alpha_L,alpha_Y) % LMI for sector delimited area
 %% H2 
- [K_c_CT_H2,rho_c_CT_H2,feas_c_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
+ [K_c_CT_H2,rho_c_CT_H2,feas_c_CT_H2]=LMI_CT_H2_Noise_Test(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
 
  %% Display
 
@@ -245,6 +245,82 @@ title('LMI Sector');
 legend([h1, h3], {sprintf('Sector (angle = %d°)', angle), 'Eigenvalues'}, 'Location', 'Best');
 xlabel('Re');
 ylabel('Im');
+
+hold off;
+
+%% Calcolo autovalori Effort
+eig_CT_effort = eig(A+B*K_c_CT_effort);
+
+%% Plot Autovalori Stability
+% Definizione dei valori di alpha_L e alpha_Y
+figure;
+hold on;
+grid on;
+axis equal;
+
+% Impostiamo limiti degli assi in base agli autovalori
+y_limit = max(abs(imag(eig_CT_effort))) + 0.2;
+x_limit = y_limit;
+
+% Limiti degli assi (estesi di un po' rispetto agli autovalori)
+xlim([-x_limit, x_limit]);
+ylim([-y_limit, y_limit]);
+
+% Disegnare solo gli autovalori
+h1 = plot(real(eig_CT_effort), imag(eig_CT_effort), 'bx', 'MarkerSize', 10, 'LineWidth', 2); % Autovalori in blu
+
+% Disegnare gli assi
+plot([-x_limit, x_limit], [0, 0], 'k', 'LineWidth', 1); % Asse X
+plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1); % Asse Y
+
+% Titolo e etichette degli assi
+title('LMI Effort');
+xlabel('Re');
+ylabel('Im');
+
+% Creare oggetti fittizi per alpha_L e alpha_Y, così non avranno linee
+h2 = plot(NaN, NaN, 'bx'); % Dummy plot per alpha_L
+h3 = plot(NaN, NaN, 'bx'); % Dummy plot per alpha_Y
+
+% Legenda con i valori di alpha_L e alpha_Y senza linea
+legend([h1, h2, h3], {'Eigenvalues', ...
+    ['\alpha_L = ', num2str(alpha_L)], ...
+    ['\alpha_Y = ', num2str(alpha_Y)]}, 'Location', 'Best');
+
+hold off;
+
+
+%% Calcolo autovalori Stability
+eig_CT_H2 = eig(A+B*K_c_CT_H2);
+
+%% Plot Autovalori Stability
+figure;
+hold on;
+grid on;
+axis equal;
+
+% Impostiamo limiti degli assi in base agli autovalori
+y_limit = max(abs(imag(eig_CT_H2))) + 0.2;
+x_limit = y_limit;
+
+% Limiti degli assi (estesi di un po' rispetto agli autovalori)
+xlim([-x_limit, x_limit]);
+ylim([-y_limit, y_limit]);
+
+% Disegnare solo gli autovalori
+h1 = plot(real(eig_CT_H2), imag(eig_CT_H2), 'bx', 'MarkerSize', 10, 'LineWidth', 2); % Autovalori in blu
+
+% Disegnare gli assi
+plot([-x_limit, x_limit], [0, 0], 'k', 'LineWidth', 1); % Asse X
+plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1); % Asse Y
+
+% Titolo e etichette degli assi
+title('LMI H2');
+xlabel('Re');
+ylabel('Im');
+
+% Legenda per gli autovalori
+legend(h1, {'Eigenvalues'}, 'Location', 'Best');
 
 hold off;
 
