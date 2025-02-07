@@ -100,11 +100,11 @@ alpha_Y = 0; % Effort LMIs
 % Centralized LMI 
 ContStruc_Centr = ones(N,N);
 [cfm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Centr,3);
-[K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
+[K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Centr) 
 
 % Decentralized LMI
 ContStruc_Dec = diag(ones(N,1));
-[K_De_CT,rho_De_CT,feas_De_CT]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Dec) % LMI for H2
+[K_De_CT,rho_De_CT,feas_De_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Dec) 
 
 % String LMI
 ContStruc_Distr_string=eye(N);
@@ -113,7 +113,7 @@ for i=1:N-1
     ContStruc_Distr_string(i+1,i)=1;
 end
 [string_fm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Distr_string,3);
-[K_string_CT,rho_string_CT,feas_string_CT]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Distr_string) % LMI for H2
+[K_string_CT,rho_string_CT,feas_string_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Distr_string) 
 
 % Star LMI
 ContStruc_Distr_star=eye(N);
@@ -122,7 +122,7 @@ for i=2:N
     ContStruc_Distr_star(i,1)=1;
 end
 [star_fm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Distr_star,3);
-[K_star_CT,rho_star_CT,feas_star_CT]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_star) % LMI for H2
+[K_star_CT,rho_star_CT,feas_star_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Distr_star) 
 
 % % Continuous Time 
 %  [K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Centr); % LMI for stability
@@ -171,7 +171,6 @@ for t=T
     k=k+1;
 
     % state computation
-    x_c_free(:,k)=expm(A*t)*x0; % No control
     x_c_CT(:,k)=expm((A+B*K_c_CT)*t)*x0;
     x_De_CT(:,k)=expm((A+B*K_De_CT)*t)*x0;
     x_star_CT(:,k)=expm((A+B*K_star_CT)*t)*x0;
@@ -188,19 +187,19 @@ end
 %% Continuous Time figure
 % Primo grafico: posizione lungo X
 figure
-plot(T, x_c_free(1,:),T, x_c_CT(1,:), T, x_De_CT(1,:), T, x_star_CT(1,:),T,x_string_CT(1,:)) % Position of the first Mass along x direction
+plot(T, x_c_CT(1,:), T, x_De_CT(1,:), T, x_star_CT(1,:),T,x_string_CT(1,:)) % Position of the first Mass along x direction
 title('CT controller Position in X')  
 grid on
-legend('No control','Centralized CT', 'Decentralized CT', 'Star CT', 'String CT') % Aggiunge la legenda
+legend('Centralized CT', 'Decentralized CT', 'Star CT', 'String CT') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (X)') % Etichetta dell'asse y
 
 % Secondo grafico: posizione lungo Y
 figure
-plot(T, x_c_free(3,:),T, x_c_CT(3,:), T, x_De_CT(3,:), T, x_star_CT(3,:),T,x_string_CT(3,:)) % Position of the first Mass along y direction
+plot(T, x_c_CT(3,:), T, x_De_CT(3,:), T, x_star_CT(3,:),T,x_string_CT(3,:)) % Position of the first Mass along y direction
 title('CT controllers Position in Y')
 grid on
-legend('No control','Centralized CT', 'Decentralized CT', 'Star CT', 'String CT') % Aggiunge la legenda
+legend('Centralized CT', 'Decentralized CT', 'Star CT', 'String CT') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (Y)') % Etichetta dell'asse y
 
