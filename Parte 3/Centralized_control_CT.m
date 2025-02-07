@@ -208,6 +208,7 @@ title('All masses X positions')
 for i=1:4:33
     plot(T,x_c_CT(i,:))
     legend('x'num2str(i))
+    hold on
 end
 grid on
 xlabel('Time (s)') % Etichetta dell'asse x
@@ -219,6 +220,7 @@ title('All masses X positions')
 for i=3:4:35
     plot(T,x_c_CT(i,:))
     legend('y'num2str(i))
+    hold on
 end
 grid on
 xlabel('Time (s)') % Etichetta dell'asse x
