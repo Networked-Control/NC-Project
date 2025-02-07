@@ -88,27 +88,32 @@ spectral_abscissa = max(real_parts_CT);   % Spectral Abscissa
 disp(['Spectral Abscissa: ', num2str(spectral_abscissa)]);
 
 %% Control Structures
-alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
+alpha = 10;  % Must be positive, the negative sign is already considered in the LMI computation
 %rho_DT = exp(alpha*Ts);
 rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1; % center and radius are computed for Circle LMIs
-angle = 45; % Sector LMIs
-alpha_L = 10^100; % Effort LMIs
-alpha_Y = 0; % Effort LMIs
+angle = 30; % Sector LMIs
+alpha_L = 0.1; % Effort LMIs
+alpha_Y = 100; % Effort LMIs
 
 % Centralized LMI Performance
 ContStruc_Centr = ones(N,N);
 [cfm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Centr,3);
 
 % Continuous Time 
+%% Stability
  [K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Centr); % LMI for stability
+%% Performance
  [K_c_CT_perf,rho_c_CT_perf,feas_c_CT_perf]=LMI_CT_Performance(A,Bd,Cd,N,ContStruc_Centr,alpha); % LMI for performance
+%% Sector
  [K_c_CT_sector,rho_c_CT_sector,feas_c_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Centr,angle) % LMI for sector delimited area
+%% Effort 
  [K_c_CT_effort,rho_c_CT_effort,feas_c_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Centr,alpha_L,alpha_Y) % LMI for sector delimited area
+%% H2 
  [K_c_CT_H2,rho_c_CT_H2,feas_c_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
 
-%% Display
+ %% Display
 
  disp('Results (Continuous-time):')
  disp(['-  Centralized: Feasibility=',num2str(feas_c_CT),', rho=',num2str(rho_c_CT),', FM=',num2str(cfm),'.'])
@@ -131,41 +136,113 @@ for i=1:N
         Hd{i}];
 end
 
-%% Calcolo autovalori
-eig_CT = eig(F+G*K_c_CT_Sector)
+%% Calcolo autovalori Stability
+eig_CT = eig(A+B*K_c_CT);
 
-%% Creazione della figura
+%% Plot Autovalori Stability
 figure;
 hold on;
 grid on;
 axis equal;
-xlim([-1.2 1.2]);
-ylim([-1.2 1.2]);
 
-% Define the number of points along the lines
-num_points = 100;
-t = linspace(0, 5, num_points);  % This generates points for the line
+% Impostiamo limiti degli assi in base agli autovalori
+y_limit = max(abs(imag(eig_CT))) + 0.2;
+x_limit = y_limit;
 
-% First line: make sure the real part is negative
-z1 = -t .* (cos(angle) + 1i * sin(angle));  % Negative real part
+% Limiti degli assi (estesi di un po' rispetto agli autovalori)
+xlim([-x_limit, x_limit]);
+ylim([-y_limit, y_limit]);
 
-% Second line: make sure the real part is negative
-z2 = -t .* (cos(angle + pi) + 1i * sin(angle + pi));  % Negative real part
+% Disegnare solo gli autovalori
+h1 = plot(real(eig_CT), imag(eig_CT), 'bx', 'MarkerSize', 10, 'LineWidth', 2); % Autovalori in blu
 
-plot(real(z1), imag(z1), 'b', 'LineWidth', 2); % Blue line for the first
+% Disegnare gli assi
+plot([-x_limit, x_limit], [0, 0], 'k', 'LineWidth', 1); % Asse X
+plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1); % Asse Y
+
+% Titolo e etichette degli assi
+title('LMI Stability');
+xlabel('Re');
+ylabel('Im');
+
+% Legenda per gli autovalori
+legend(h1, {'Eigenvalues'}, 'Location', 'Best');
+
+hold off;
+
+
+%% Calcolo autovalori Performance
+eig_CT_perf = eig(A+B*K_c_CT_perf);
+
+%% Plot Autovalori Performance
+% Creazione della figura
+figure;
 hold on;
-plot(real(z2), imag(z2), 'r', 'LineWidth', 2); % Red line for the second
+grid on;
+axis equal;
 
-% Plot Eigenvalues
-plot(real(eig_CT), imag(eig_CT), 'bx', 'MarkerSize', 10, 'LineWidth', 2);
+% Impostiamo limiti degli assi simmetrici
+x_limit = max(abs(real(eig_CT_perf))) + 0.2;
+y_limit = x_limit; % Rendi il plot quadrato
+xlim([-x_limit, x_limit]);
+ylim([-y_limit, y_limit]);
 
-% Draw axis
-plot([-1.2, 1.2], [0, 0], 'k', 'LineWidth', 1);
-plot([0, 0], [-1.2, 1.2], 'k', 'LineWidth', 1);
+% Disegnare la retta verticale (perpendicolare all'asse x) che passa per alpha
+h_line = plot(-alpha * ones(1, 100), linspace(-y_limit, y_limit, 100), 'r-', 'LineWidth', 1.5); % Reetta rossa perpendicolare
 
-% Titolo e legenda
-title('Autovalori e Regione di Collocazione');
-legend({'Cerchio unitario', 'Regione desiderata', 'Autovalori'}, 'Location', 'Best');
+% Disegnare gli autovalori
+h1 = plot(real(eig_CT_perf), imag(eig_CT_perf), 'bx', 'MarkerSize', 10, 'LineWidth', 2); % Autovalori in blu
+
+% Disegnare gli assi
+plot([-x_limit, x_limit], [0, 0], 'k', 'LineWidth', 1);
+plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1);
+
+% Titolo e legenda, includendo solo la linea rossa e gli autovalori
+title('Eigenvalues Behind a Vertical Line at alpha');
+legend([h_line, h1], {'Vertical Line at alpha', 'Eigenvalues'}, 'Location', 'Best');
+xlabel('Re');
+ylabel('Im');
+
+hold off;
+
+%% Calcolo autovalori Sector
+eig_CT_sector = eig(A+B*K_c_CT_sector);
+
+%% Plot Autovalori Sector
+
+% Find the maximum absolute real value for symmetric axes
+x_limit = max(abs(real(eig_CT_sector))) + 0.2;
+y_limit = x_limit; % Make the plot square
+
+% Create the figure
+figure;
+hold on;
+grid on;
+axis equal;
+
+% Set symmetric axis limits
+xlim([-x_limit, x_limit]);
+ylim([-y_limit, y_limit]); 
+
+% Define the sector lines
+x_sector = linspace(-x_limit, 0, 100); % Generate points for the lines
+y_sector1 = tand(angle) * x_sector; % First line (+angle w.r.t. x-axis)
+y_sector2 = -tand(angle) * x_sector; % Second line (-angle w.r.t. x-axis)
+
+% Plot the sector with the two boundary lines
+h1 = plot(x_sector, y_sector1, 'r-', 'LineWidth', 1.5); % Positive real part
+h2 = plot(x_sector, y_sector2, 'r-', 'LineWidth', 1.5); % Negative real part
+
+% Plot the eigenvalues in continuous time
+h3 = plot(real(eig_CT_sector), imag(eig_CT_sector), 'bx', 'MarkerSize', 10, 'LineWidth', 2);
+
+% Draw the axes with symmetric length
+plot([-x_limit, x_limit], [0, 0], 'k', 'LineWidth', 1);
+plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1);
+
+% Title and legend with the sector angle
+title('LMI Sector');
+legend([h1, h3], {sprintf('Sector (angle = %d°)', angle), 'Eigenvalues'}, 'Location', 'Best');
 xlabel('Re');
 ylabel('Im');
 
@@ -238,8 +315,6 @@ grid on
 legend('CT Stability', 'CT Performance', 'CT Sector','CT Effort', 'CT H2') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse y
 ylabel('Control action (U(y))') % Etichetta dell'asse y
-
-%Eigen = eig(A+B*K_c_CT_effort)
 
 %% Grafico delle posizioni di tutte le masse
 % Grafico posizioni x
