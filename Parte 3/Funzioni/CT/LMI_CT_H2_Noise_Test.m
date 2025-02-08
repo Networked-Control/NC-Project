@@ -19,7 +19,7 @@ C_H2 = [eye(36); zeros(18,36)];
 D_H2 = [zeros(36,18); R_sqrt];
 
 % White noise input
-W = eye(18); % White noise
+W = eye(36); % White noise
 
 % Optimization variables
 S = sdpvar(mtot+ntot,mtot+ntot);
