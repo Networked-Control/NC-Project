@@ -94,7 +94,7 @@ rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
-alpha_L = 10^100; % Effort LMIs
+alpha_L = 10; % Effort LMIs
 alpha_Y = 0; % Effort LMIs
 % Distributed LMI Performance
 ContStruc_Distr_string=eye(N);

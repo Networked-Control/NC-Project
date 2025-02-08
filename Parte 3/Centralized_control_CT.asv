@@ -426,13 +426,13 @@ xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (Y)') % Etichetta dell'asse y
 
 %% Simulation data only for open loop
-Tfinal=150;
-T=0:0.015:Tfinal;
+Tfinal=1000000;
+T=0:100:Tfinal;
 % Random initial condition 
-min_x0 = -10;
-max_x0 = 10;
-x0 = min_x0 + (max_x0-min_x0) .* rand(36,1);  % Generate a random number between [min_x0, max_x0]
-
+min_x0 = 0;
+max_x0 = 1;
+random_number = min_x0 + (max_x0-min_x0) .* rand(1,1);  % Generate a random number between [min_x0, max_x0]
+x0 = repmat(random_number,36,1);
 
 k = 0;
 Q = eye(size(G,2));
@@ -447,8 +447,5 @@ for t=T
 end
 
 figure
-hold on
-grid on
-plot(T, x_c_free(2,:)) % variabile di controllo lungo x
-plot(T, x_c_free(4,:)) % variabile di controllo lungo y
-title('xv1 and yv1 in OPEN loop')
+plot(T, x_c_free(3,:)) % variabile di controllo lungo x
+title('x1 in OPEN loop')
