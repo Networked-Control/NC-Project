@@ -325,7 +325,7 @@ legend(h1, {'Eigenvalues'}, 'Location', 'Best');
 hold off;
 
 %% Simulation data
-Tfinal=100;
+Tfinal=10;
 T=0:0.01:Tfinal;
 % Random initial condition 
 min_x0 = 0;
