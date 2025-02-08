@@ -328,10 +328,9 @@ hold off;
 Tfinal=10;
 T=0:0.01:Tfinal;
 % Random initial condition 
-min_x0 = 0;
-max_x0 = 1;
-random_number = min_x0 + (max_x0-min_x0) .* rand(1,1);  % Generate a random number between [min_x0, max_x0]
-x0 = repmat(random_number,36,1);
+min_x0 = -10;
+max_x0 = 10;
+x0 = min_x0 + (max_x0-min_x0) .* rand(36,1);  % Generate a random number between [min_x0, max_x0]
 
 k = 0;
 Q = eye(size(G,2));
