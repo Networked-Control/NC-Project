@@ -54,7 +54,7 @@ end
 Q_w = eye(ntot); % Identity matrix for white noise
 
 % LMI Constraints including noise effect
-LMIconstr = [[P - F*P*F' - F*L'*Gtot' - Gtot*L*F' + Q_w, Gtot*L;
+LMIconstr = [[P - F*P*F' - F*L'*Gtot' - Gtot*L*F' - Q_w*Q_w, Gtot*L;
               L'*Gtot', P] >= 1e-1*eye(ntot*2)];
           
 H2_constr = [S, H_H2*P + D_H2*L;

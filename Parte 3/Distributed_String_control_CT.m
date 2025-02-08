@@ -145,7 +145,8 @@ random_number = min_x0 + (max_x0-min_x0) .* rand(1,1);  % Generate a random numb
 x0 = repmat(random_number,36,1);
 
 k = 0;
-
+Q = eye(size(G,2));
+x_string_CT_H2(:,1)= x0;
 
 % CT Simulation 
 for t=T
@@ -157,7 +158,8 @@ for t=T
     x_string_CT_perf(:,k)=expm((A+B*K_string_CT_perf)*t)*x0;
     x_string_CT_sector(:,k)=expm((A+B*K_string_CT_sector)*t)*x0;
     x_string_CT_effort(:,k)=expm((A+B*K_string_CT_effort)*t)*x0;
-    x_string_CT_H2(:,k)=expm((A+B*K_string_CT_H2)*t)*x0;
+     w_k = 10*sqrt(Q) * randn(size(G,2),1); % Rumore bianco gaussiano
+    x_string_CT_H2(:,k)=expm((A+B*K_string_CT_H2)*t)*x_string_CT_H2(:,1) + G *w_k*sqrt(t);
 
     % control variable
     u_string_CT(:,k) = K_string_CT * x_string_CT(:,k);
