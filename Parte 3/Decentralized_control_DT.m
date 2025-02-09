@@ -231,3 +231,191 @@ grid on
 legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
 xlabel('Time (k)')
 ylabel('Control U(y)')
+
+%% Calcolo autovalori Stability
+eig_DT = eig(F+G*K_De_DT);
+
+%% Plot Autovalori Stability
+figure;
+hold on;
+grid on;
+
+% Impostiamo limiti degli assi in base agli autovalori
+y_limit = max(abs(imag(eig_DT))) + 0.2;  % Aggiungiamo un piccolo margine
+x_limit = max(abs(real(eig_DT))) + 0.2;  % Aggiungiamo un piccolo margine
+
+% Impostiamo i limiti per ottenere un grafico quadrato
+max_limit = max(x_limit, y_limit);  % Assicuriamoci che sia un quadrato
+xlim([-max_limit, max_limit]);
+ylim([-max_limit, max_limit]);
+
+% Disegnare solo gli autovalori
+h1 = plot(real(eig_DT), imag(eig_DT), 'bx', 'MarkerSize', 10, 'LineWidth', 2); % Autovalori in blu
+
+% Disegnare gli assi
+plot([-max_limit, max_limit], [0, 0], 'k', 'LineWidth', 1); % Asse X
+plot([0, 0], [-max_limit, max_limit], 'k', 'LineWidth', 1); % Asse Y
+
+% Disegnare il cerchio unitario tratteggiato
+theta = linspace(0, 2*pi, 300);
+plot(cos(theta), sin(theta), 'k--', 'LineWidth', 1.5); % Cerchio unitario tratteggiato
+
+% Titolo e etichette degli assi
+title('LMI Stability');
+xlabel('Re');
+ylabel('Im');
+
+% Legenda per gli autovalori
+legend(h1, {'Eigenvalues'}, 'Location', 'Best');
+
+axis equal;  % Assicuriamo che gli assi siano uguali per un grafico quadrato
+hold off;
+
+
+%% Calcolo autovalori Performance
+eig_DT_perf = eig(F+G*K_De_DT_perf);
+
+%% Plot Autovalori Performance
+figure;
+hold on;
+grid on;
+
+% Impostiamo limiti degli assi in base agli autovalori
+xlim([-1.2 1.2]);
+ylim([-1.2 1.2]);
+
+% Disegnare solo gli autovalori
+h1 = plot(real(eig_DT_perf), imag(eig_DT_perf), 'bx', 'MarkerSize', 10, 'LineWidth', 2); % Autovalori in blu
+
+% Disegnare gli assi
+plot([-max_limit, max_limit], [0, 0], 'k', 'LineWidth', 1); % Asse X
+plot([0, 0], [-max_limit, max_limit], 'k', 'LineWidth', 1); % Asse Y
+
+% Disegnare il cerchio unitario tratteggiato
+theta = linspace(0, 2*pi, 300);
+plot(cos(theta), sin(theta), 'k--', 'LineWidth', 1.5); % Cerchio unitario tratteggiato
+
+% Disegnare il cerchio con raggio rho_DT (inserito dentro al cerchio unitario)
+plot(rho_DT * cos(theta), rho_DT * sin(theta), 'r-', 'LineWidth', 1.5); % Cerchio con raggio rho_DT
+
+% Titolo e etichette degli assi
+title('LMI Performance');
+xlabel('Re');
+ylabel('Im');
+
+% Legenda per gli autovalori
+legend(h1, {'Eigenvalues'}, 'Location', 'Best');
+
+axis equal;  % Assicuriamo che gli assi siano uguali per un grafico quadrato
+hold off;
+
+
+%% Calcolo autovalori Circle
+eig_DT_circle = eig(F+G*K_De_DT_circle)
+
+%% Plot LMI Circle
+figure;
+hold on;
+grid on;
+axis equal;
+xlim([-1.2 1.2]);
+ylim([-1.2 1.2]);
+
+% Disegna il cerchio unitario
+theta = linspace(0, 2*pi, 300);
+plot(cos(theta), sin(theta), 'k--', 'LineWidth', 1.5); % Cerchio unitario
+
+% Disegna il cerchio desiderato
+plot(-center + radius * cos(theta), radius * sin(theta), 'r-', 'LineWidth', 1.5); 
+
+% Disegna gli autovalori
+plot(real(eig_DT_circle), imag(eig_DT_circle), 'bx', 'MarkerSize', 10, 'LineWidth', 2);
+
+% Disegna gli assi
+plot([-1.2, 1.2], [0, 0], 'k', 'LineWidth', 1);
+plot([0, 0], [-1.2, 1.2], 'k', 'LineWidth', 1);
+
+% Titolo e legenda
+title('Autovalori e Regione di Collocazione');
+legend({'Cerchio unitario', 'Regione desiderata', 'Autovalori'}, 'Location', 'Best');
+xlabel('Re');
+ylabel('Im');
+
+hold off;
+%% Calcolo autovalori Effort
+eig_DT_effort = eig(F+G*K_De_DT_effort);
+
+%% Plot Autovalori Effort
+figure;
+hold on;
+grid on;
+
+% Impostiamo limiti degli assi in base agli autovalori
+y_limit = max(abs(imag(eig_DT_effort))) + 0.2;  % Aggiungiamo un piccolo margine
+x_limit = max(abs(real(eig_DT_effort))) + 0.2;  % Aggiungiamo un piccolo margine
+
+% Impostiamo i limiti per ottenere un grafico quadrato
+max_limit = max(x_limit, y_limit);  % Assicuriamoci che sia un quadrato
+xlim([-max_limit, max_limit]);
+ylim([-max_limit, max_limit]);
+
+% Disegnare solo gli autovalori
+h1 = plot(real(eig_DT_effort), imag(eig_DT_effort), 'bx', 'MarkerSize', 10, 'LineWidth', 2); % Autovalori in blu
+
+% Disegnare gli assi
+plot([-max_limit, max_limit], [0, 0], 'k', 'LineWidth', 1); % Asse X
+plot([0, 0], [-max_limit, max_limit], 'k', 'LineWidth', 1); % Asse Y
+
+% Disegnare il cerchio unitario tratteggiato
+theta = linspace(0, 2*pi, 300);
+plot(cos(theta), sin(theta), 'k--', 'LineWidth', 1.5); % Cerchio unitario tratteggiato
+
+% Titolo e etichette degli assi
+title('LMI Effort');
+xlabel('Re');
+ylabel('Im');
+
+% Legenda per gli autovalori
+legend(h1, {'Eigenvalues'}, 'Location', 'Best');
+
+axis equal;  % Assicuriamo che gli assi siano uguali per un grafico quadrato
+hold off;
+
+%% Calcolo autovalori H2
+eig_DT_H2 = eig(F+G*K_De_DT_H2);
+
+%% Plot Autovalori H2
+figure;
+hold on;
+grid on;
+
+% Impostiamo limiti degli assi in base agli autovalori
+y_limit = max(abs(imag(eig_DT_H2))) + 0.2;  % Aggiungiamo un piccolo margine
+x_limit = max(abs(real(eig_DT_H2))) + 0.2;  % Aggiungiamo un piccolo margine
+
+% Impostiamo i limiti per ottenere un grafico quadrato
+max_limit = max(x_limit, y_limit);  % Assicuriamoci che sia un quadrato
+xlim([-max_limit, max_limit]);
+ylim([-max_limit, max_limit]);
+
+% Disegnare solo gli autovalori
+h1 = plot(real(eig_DT_H2), imag(eig_DT_H2), 'bx', 'MarkerSize', 10, 'LineWidth', 2); % Autovalori in blu
+
+% Disegnare gli assi
+plot([-max_limit, max_limit], [0, 0], 'k', 'LineWidth', 1); % Asse X
+plot([0, 0], [-max_limit, max_limit], 'k', 'LineWidth', 1); % Asse Y
+
+% Disegnare il cerchio unitario tratteggiato
+theta = linspace(0, 2*pi, 300);
+plot(cos(theta), sin(theta), 'k--', 'LineWidth', 1.5); % Cerchio unitario tratteggiato
+
+% Titolo e etichette degli assi
+title('LMI H2');
+xlabel('Re');
+ylabel('Im');
+
+% Legenda per gli autovalori
+legend(h1, {'Eigenvalues'}, 'Location', 'Best');
+
+axis equal;  % Assicuriamo che gli assi siano uguali per un grafico quadrato
+hold off;
