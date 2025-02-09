@@ -207,7 +207,7 @@ xlabel('Time (s)') % Etichetta dell'asse y
 ylabel('Control action (U(y))') % Etichetta dell'asse y
 
 %% Calcolo autovalori Stability
-eig_CT = eig(A+B*K_star_CT);
+eig_CT = eig(A+B*K_De_CT);
 
 %% Plot Autovalori Stability
 figure;
@@ -242,7 +242,7 @@ hold off;
 
 
 %% Calcolo autovalori Performance
-eig_CT_perf = eig(A+B*K_star_CT_perf);
+eig_CT_perf = eig(A+B*K_De_CT_perf);
 
 %% Plot Autovalori Performance
 % Creazione della figura
@@ -276,7 +276,7 @@ ylabel('Im');
 hold off;
 
 %% Calcolo autovalori Sector
-eig_CT_sector = eig(A+B*K_star_CT_sector);
+eig_CT_sector = eig(A+B*K_De_CT_sector);
 
 %% Plot Autovalori Sector
 
