@@ -144,14 +144,21 @@ x0 = repmat(random_number,36,1);
 
 % DT Simulation
 
+Q = 0.01 * eye(n); % Varianza del rumore bianco
+a = 0.01; % Definisce l'ampiezza del rumore
+
 k = 0;
 for k=1:Tfinal/Ts
+
+    w = mvnrnd(zeros(n,1), Q)'; % Rumore bianco gaussiano
+    % w = a * (2 * rand(n,1) - 1); % rumore uniforme
+
     % state variable
     x_star_DT(:,k)=((F+G*K_star_DT)^k)*x0;
     x_star_DT_perf(:,k)=((F+G*K_star_DT_perf)^k)*x0;
     x_star_DT_circle(:,k)=((F+G*K_star_DT_circle)^k)*x0;
     x_star_DT_effort(:,k)=((F+G*K_star_DT_effort)^k)*x0;
-    x_star_DT_H2(:,k)=((F+G*K_star_DT_H2)^k)*x0;
+    x_star_DT_H2(:,k)=((F+G*K_star_DT_H2)^k)*x0 + w;
 
     % control variable
     u_star_DT(:,k) = K_star_DT * x_star_DT(:,k);
