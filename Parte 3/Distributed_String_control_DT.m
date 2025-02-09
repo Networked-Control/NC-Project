@@ -340,8 +340,8 @@ plot([-1.2, 1.2], [0, 0], 'k', 'LineWidth', 1);
 plot([0, 0], [-1.2, 1.2], 'k', 'LineWidth', 1);
 
 % Titolo e legenda
-title('Autovalori e Regione di Collocazione');
-legend({'Cerchio unitario', 'Regione desiderata', 'Autovalori'}, 'Location', 'Best');
+title('LMI Circle');
+legend({'Unitary Circle', 'Desired Region', 'Eigenvalues'}, 'Location', 'Best');
 xlabel('Re');
 ylabel('Im');
 
