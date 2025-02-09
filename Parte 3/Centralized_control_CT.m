@@ -335,7 +335,7 @@ x0 = min_x0 + (max_x0-min_x0) .* rand(36,1);  % Generate a random number between
 k = 0;
 Q = eye(size(G,2));
 x_c_CT_H2(:,1)= x0;
-
+a = 0.1; % Definisce l'ampiezza del rumore
 % CT Simulation 
 for t=T
     k=k+1;
@@ -346,8 +346,8 @@ for t=T
     x_c_CT_perf(:,k)=expm((A+B*K_c_CT_perf)*t)*x0;
     x_c_CT_sector(:,k)=expm((A+B*K_c_CT_sector)*t)*x0;
     x_c_CT_effort(:,k)=expm((A+B*K_c_CT_effort)*t)*x0;
-    w_k = 10*sqrt(Q) * randn(size(G,2),1); % Rumore bianco gaussiano
-    x_c_CT_H2(:,k) = expm((A+B*K_c_CT_H2)*t) * x_c_CT_H2(:,1) + G *w_k*sqrt(t);
+    w = a * (2 * rand(2*n,1) - 1); % rumore uniforme
+    x_c_CT_H2(:,k) = expm((A+B*K_c_CT_H2)*t) * x_c_CT_H2(:,1) + w
 
     % control variable
     u_c_CT(:,k) = K_c_CT * x_c_CT(:,k);

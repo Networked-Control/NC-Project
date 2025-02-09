@@ -134,20 +134,18 @@ end
 Tfinal=10;
 T=0:0.01:Tfinal;
 % Random initial condition 
-min_x0 = 0;
-max_x0 = 1;
-random_number = min_x0 + (max_x0-min_x0) .* rand(1,1);  % Generate a random number between [min_x0, max_x0]
-x0 = repmat(random_number,36,1);
+min_x0 = -10;
+max_x0 = 10;
+x0 = min_x0 + (max_x0-min_x0) .* rand(36,1);  % Generate a random number between [min_x0, max_x0]
 
 % DT Simulation
 
 Q = 0.01 * eye(n); % Varianza del rumore bianco
-a = 0.01; % Definisce l'ampiezza del rumore
+a = 0.1; % Definisce l'ampiezza del rumore
 
 k = 0;
 for k=1:Tfinal/Ts
-    w = mvnrnd(zeros(n,1), Q)'; % Rumore bianco gaussiano
-   % w = a * (2 * rand(n,1) - 1); % rumore uniforme
+   w = a * (2 * rand(n,1) - 1); % rumore uniforme
 
     % state variable
     x_De_DT(:,k)=((F+G*K_De_DT)^k)*x0;

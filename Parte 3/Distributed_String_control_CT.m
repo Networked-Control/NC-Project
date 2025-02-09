@@ -139,27 +139,25 @@ end
 Tfinal=10;
 T=0:0.01:Tfinal;
 % Random initial condition 
-min_x0 = 0;
-max_x0 = 1;
-random_number = min_x0 + (max_x0-min_x0) .* rand(1,1);  % Generate a random number between [min_x0, max_x0]
-x0 = repmat(random_number,36,1);
-
+min_x0 = -10;
+max_x0 = 10;
+x0 = min_x0 + (max_x0-min_x0) .* rand(36,1);  % Generate a random number between [min_x0, max_x0]
 k = 0;
 Q = eye(size(G,2));
 x_string_CT_H2(:,1)= x0;
+a = 0.1; % Definisce l'ampiezza del rumore
 
 % CT Simulation 
 for t=T
     k=k+1;
-
+    w = a * (2 * rand(2*n,1) - 1); % rumore uniforme
     % state computation
     x_string_free(:,k)=expm(A*t)*x0; % No control
     x_string_CT(:,k)=expm((A+B*K_string_CT)*t)*x0;
     x_string_CT_perf(:,k)=expm((A+B*K_string_CT_perf)*t)*x0;
     x_string_CT_sector(:,k)=expm((A+B*K_string_CT_sector)*t)*x0;
     x_string_CT_effort(:,k)=expm((A+B*K_string_CT_effort)*t)*x0;
-     w_k = 10*sqrt(Q) * randn(size(G,2),1); % Rumore bianco gaussiano
-    x_string_CT_H2(:,k)=expm((A+B*K_string_CT_H2)*t)*x_string_CT_H2(:,1) + G *w_k*sqrt(t);
+    x_string_CT_H2(:,k)=expm((A+B*K_string_CT_H2)*t)*x_string_CT_H2(:,1) + w;
 
     % control variable
     u_string_CT(:,k) = K_string_CT * x_string_CT(:,k);
