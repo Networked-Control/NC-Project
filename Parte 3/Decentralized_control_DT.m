@@ -90,8 +90,8 @@ disp(['Spectral Radius: ', num2str(spectral_radius)]);
 alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
 %rho_DT = exp(alpha*Ts);
 rho_DT = 0.88;
-center = -0.5; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 0.4; % center and radius are computed for Circle LMIs
+center = 0.5; % Must be positive, the negative sign is already considered in the LMI computation
+radius = 0.35; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
 alpha_L = 0.1; % Effort LMIs
 alpha_Y = 10; % Effort LMIs
@@ -103,7 +103,7 @@ ContStruc_Dec = diag(ones(N,1));
 % Discrete Time
 [K_De_DT,rho_De_DT,feas_De_DT]=LMI_DT_Stability(F,Gd,Hd,N,ContStruc_Dec); % LMI for stability
 [K_De_DT_perf,rho_De_DT_perf,feas_De_DT_perf]=LMI_DT_Performance(F,Gd,Hd,N,ContStruc_Dec,rho_DT); % LMI for performance
-[K_De_DT_circle,rho_De_DT_circle,feas_De_DT_circle]=LMI_DT_Circle_Area(A,Bd,Cd,N,ContStruc_Dec,center,radius) % LMI for circle delimited area
+[K_De_DT_circle,rho_De_DT_circle,feas_De_DT_circle]=LMI_DT_Circle_Area(F,Gd,Hd,N,ContStruc_Dec,center,radius) % LMI for circle delimited area
 [K_De_DT_effort,rho_De_DT_effort,feas_De_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Dec,alpha_L,alpha_Y);
 [K_De_DT_H2,rho_De_DT_H2,feas_De_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Dec);
 
@@ -145,7 +145,7 @@ a = 0.1; % Definisce l'ampiezza del rumore
 
 k = 0;
 for k=1:Tfinal/Ts
-   w = a * (2 * rand(n,1) - 1); % rumore uniforme
+   w = a * (2 * rand(2*n,1) - 1); % rumore uniforme
 
     % state variable
     x_De_DT(:,k)=((F+G*K_De_DT)^k)*x0;
@@ -188,8 +188,8 @@ plot([-1.2, 1.2], [0, 0], 'k', 'LineWidth', 1);
 plot([0, 0], [-1.2, 1.2], 'k', 'LineWidth', 1);
 
 % Titolo e legenda
-title('Autovalori e Regione di Collocazione');
-legend({'Cerchio unitario', 'Regione desiderata', 'Autovalori'}, 'Location', 'Best');
+title('LMI Circle');
+legend({'Unitary Circle', 'Desired Region', 'Eigenvalues'}, 'Location', 'Best');
 xlabel('Re');
 ylabel('Im');
 

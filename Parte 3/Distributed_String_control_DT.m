@@ -149,7 +149,7 @@ x0 = min_x0 + (max_x0-min_x0) .* rand(36,1);  % Generate a random number between
 k = 0;
 for k=1:Tfinal/Ts
 
-    w = a * (2 * rand(n,1) - 1); % rumore uniforme
+    w = a * (2 * rand(2*n,1) - 1); % rumore uniforme
 
     % state variable
     x_string_DT(:,k)=((F+G*K_string_DT)^k)*x0;

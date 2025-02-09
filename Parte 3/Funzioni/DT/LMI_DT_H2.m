@@ -72,7 +72,7 @@ H2_constrain = (H2_constr >= 1e-2 * eye(n));
 objective_function = trace(S);
 
 constrains = [LMIconstr,H2_constr];
-options=sdpsettings('solver','sdpt3');
+options=sdpsettings('solver','sedumi');
 J=optimize(constrains,objective_function,options);
 feas=J.problem;
 L=double(L);
