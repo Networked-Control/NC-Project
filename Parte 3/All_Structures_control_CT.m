@@ -88,23 +88,21 @@ spectral_abscissa = max(real_parts_CT);   % Spectral Abscissa
 disp(['Spectral Abscissa: ', num2str(spectral_abscissa)]);
 
 %% Control Structures
-alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
+alpha = 0.1;  % Must be positive, the negative sign is already considered in the LMI computation
 %rho_DT = exp(alpha*Ts);
 rho_DT = 0.88;
-center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1; % center and radius are computed for Circle LMIs
-angle = 45; % Sector LMIs
+angle = pi/4; % Sector LMIs
 alpha_L = 10^100; % Effort LMIs
 alpha_Y = 0; % Effort LMIs
 
 % Centralized LMI 
 ContStruc_Centr = ones(N,N);
 [cfm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Centr,3);
-[K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Centr) 
+[K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_Mixed(A,Bd,Cd,N,ContStruc_Centr,alpha,angle) 
 
 % Decentralized LMI
 ContStruc_Dec = diag(ones(N,1));
-[K_De_CT,rho_De_CT,feas_De_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Dec) 
+[K_De_CT,rho_De_CT,feas_De_CT]=LMI_CT_Mixed(A,Bd,Cd,N,ContStruc_Dec,alpha,angle) 
 
 % String LMI
 ContStruc_Distr_string=eye(N);
@@ -113,7 +111,7 @@ for i=1:N-1
     ContStruc_Distr_string(i+1,i)=1;
 end
 [string_fm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Distr_string,3);
-[K_string_CT,rho_string_CT,feas_string_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Distr_string) 
+[K_string_CT,rho_string_CT,feas_string_CT]=LMI_CT_Mixed(A,Bd,Cd,N,ContStruc_Distr_string,alpha,angle) 
 
 % Star LMI
 ContStruc_Distr_star=eye(N);
@@ -122,44 +120,14 @@ for i=2:N
     ContStruc_Distr_star(i,1)=1;
 end
 [star_fm]=di_fixed_modes(A,Bd,Cd,N,ContStruc_Distr_star,3);
-[K_star_CT,rho_star_CT,feas_star_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Distr_star) 
-
-% % Continuous Time 
-%  [K_c_CT,rho_c_CT,feas_c_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Centr); % LMI for stability
-%  [K_c_CT_perf,rho_c_CT_perf,feas_c_CT_perf]=LMI_CT_Performance(A,Bd,Cd,N,ContStruc_Centr,alpha); % LMI for performance
-%  [K_c_CT_sector,rho_c_CT_sector,feas_c_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Centr,angle) % LMI for sector delimited area
-%  [K_c_CT_effort,rho_c_CT_effort,feas_c_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Centr,alpha_L,alpha_Y) % LMI for sector delimited area
-%  [K_c_CT_H2,rho_c_CT_H2,feas_c_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
-
-%% Display
-
- % disp('Results (Continuous-time):')
- % disp(['-  Centralized: Feasibility=',num2str(feas_c_CT),', rho=',num2str(rho_c_CT),', FM=',num2str(cfm),'.'])
- % disp(['-  Centralized_Perf: Feasibility=',num2str(feas_c_CT_perf),', rho=',num2str(rho_c_CT_perf),', FM=',num2str(cfm),'.'])
- % disp(['-  Centralized_Sector: Feasibility=',num2str(feas_c_CT_sector),', rho=',num2str(rho_c_CT_sector),', FM=',num2str(cfm),'.'])
- % disp(['-  Centralized_Effort: Feasibility=',num2str(feas_c_CT_effort),', rho=',num2str(rho_c_CT_effort),', FM=',num2str(cfm),'.'])
- % disp(['-  Centralized_H2: Feasibility=',num2str(feas_c_CT_H2),', rho=',num2str(rho_c_CT_H2),', FM=',num2str(cfm),'.'])
-
-%% Plots
-% Gtot=[];
-% Htot=[];
-% Btot=[];
-% Ctot=[];
-% for i=1:N
-%     Btot=[B,Bd{i}];
-%     Ctot=[C
-%         Cd{i}];
-%     Gtot=[G,Gd{i}];
-%     Htot=[H
-%         Hd{i}];
-% end
+[K_star_CT,rho_star_CT,feas_star_CT]=LMI_CT_Mixed(A,Bd,Cd,N,ContStruc_Distr_star,alpha,angle);
 
 %% Simulation data
 Tfinal=10;
 T=0:0.01:Tfinal;
 % Random initial condition 
-min_x0 = 0;
-max_x0 = 1;
+min_x0 = -10;
+max_x0 = 10;
 random_number = min_x0 + (max_x0-min_x0) .* rand(1,1);  % Generate a random number between [min_x0, max_x0]
 x0 = repmat(random_number,36,1);
 

@@ -94,8 +94,8 @@ rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1; % center and radius are computed for Circle LMIs
 angle = pi/4; % Sector LMIs
-alpha_L = 10; % Effort LMIs
-alpha_Y = 0; % Effort LMIs
+alpha_L = 0.1; % Effort LMIs
+alpha_Y = 10; % Effort LMIs
 
 % Decentralized LMI Performance
 ContStruc_Dec = diag(ones(N,1));
@@ -104,10 +104,10 @@ ContStruc_Dec = diag(ones(N,1));
 % Continuous Time 
 [K_De_CT,rho_De_CT,feas_De_CT]=LMI_CT_Stability(A,Bd,Cd,N,ContStruc_Dec); % LMI for stability
 [K_De_CT_perf,rho_De_CT_perf,feas_De_CT_perf]=LMI_CT_Performance(A,Bd,Cd,N,ContStruc_Dec,alpha); % LMI for performance
-%[K_De_CT_circle,rho_De_CT_circle,feas_De_CT_circle]=LMI_Circle_Area_CT(A,Bd,Cd,N,ContStruc_Dec,center,radius) % LMI for circle delimited area
 [K_De_CT_sector,rho_De_CT_sector,feas_De_CT_sector]=LMI_CT_Sector(A,Bd,Cd,N,ContStruc_Dec,angle) % LMI for sector delimited area
 [K_De_CT_effort,rho_De_CT_effort,feas_De_CT_effort]=LMI_CT_Effort(A,Bd,Cd,N,ContStruc_Dec,alpha_L,alpha_Y) % LMI for sector delimited area
 [K_De_CT_H2,rho_De_CT_H2,feas_De_CT_H2]=LMI_CT_H2(A,Bd,Cd,N,ContStruc_Dec) % LMI for H2
+[K_De_CT_Mixed,rho_De_CT_Mixed,feas_De_CT_Mixed]=LMI_CT_Mixed(A,Bd,Cd,N,ContStruc_Dec,alpha,angle,alpha_L,alpha_Y) % LMI for sector delimited area
 
 %% Display
 
@@ -117,6 +117,7 @@ ContStruc_Dec = diag(ones(N,1));
  disp(['-  Decentralized_CT_Sector: Feasibility=',num2str(feas_De_CT_sector),', rho=',num2str(rho_De_CT_sector),', FM=',num2str(Dfm),'.'])
  disp(['-  Decentralized_CT_Effort: Feasibility=',num2str(feas_De_CT_effort),', rho=',num2str(rho_De_CT_effort),', FM=',num2str(Dfm),'.'])
  disp(['-  Decentralized_CT_H2: Feasibility=',num2str(feas_De_CT_H2),', rho=',num2str(rho_De_CT_H2),', FM=',num2str(Dfm),'.'])
+ disp(['-  Decentralized_CT_Mixed: Feasibility=',num2str(feas_De_CT_Mixed),', rho=',num2str(rho_De_CT_Mixed),', FM=',num2str(Dfm),'.'])
 
 %% Plots
 Gtot=[];
@@ -156,6 +157,7 @@ for t=T
     x_De_CT_effort(:,k)=expm((A+B*K_De_CT_effort)*t)*x0;
     w = a * (2 * rand(2*n,1) - 1); % rumore uniforme
     x_De_CT_H2(:,k)=expm((A+B*K_De_CT_H2)*t)*x_De_CT_H2(:,1) + w;
+    x_De_CT_Mixed(:,k)=expm((A+B*K_De_CT_Mixed)*t)*x0;
 
 
     % control variable
@@ -164,41 +166,42 @@ for t=T
     u_De_CT_sector(:,k) = K_De_CT_sector * x_De_CT_sector(:,k);
     u_De_CT_effort(:,k) = K_De_CT_effort * x_De_CT_effort(:,k);
     u_De_CT_H2(:,k) = K_De_CT_H2 * x_De_CT_H2(:,k);
+    u_De_CT_Mixed(:,k) = K_De_CT_Mixed * x_De_CT_Mixed(:,k);
 end
 
 %% Continuous Time figure
 % Primo grafico: posizione lungo X
 figure
-plot(T, x_De_free(1,:),T, x_De_CT(1,:), T, x_De_CT_perf(1,:), T, x_De_CT_sector(1,:),T,x_De_CT_effort(1,:),T,x_De_CT_H2(1,:)) % Position of the first Mass along x direction
+plot(T, x_De_free(1,:),T, x_De_CT(1,:), T, x_De_CT_perf(1,:), T, x_De_CT_sector(1,:),T,x_De_CT_effort(1,:),T,x_De_CT_H2(1,:),T,x_De_CT_Mixed(1,:)) % Position of the first Mass along x direction
 title('CT controller Position in X')  
 grid on
-legend('No control','CT Stability', 'CT Performance', 'CT Sector', 'CT Effort', 'CT H2') % Aggiunge la legenda
+legend('No control','CT Stability', 'CT Performance', 'CT Sector', 'CT Effort', 'CT H2', 'CT Mixed') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (X)') % Etichetta dell'asse y
 
 % Secondo grafico: posizione lungo Y
 figure
-plot(T, x_De_free(3,:),T, x_De_CT(3,:), T, x_De_CT_perf(3,:), T, x_De_CT_sector(3,:),T, x_De_CT_effort(3,:),T, x_De_CT_H2(3,:)) % Position of the first Mass along y direction
+plot(T, x_De_free(3,:),T, x_De_CT(3,:), T, x_De_CT_perf(3,:), T, x_De_CT_sector(3,:),T, x_De_CT_effort(3,:),T, x_De_CT_H2(3,:),T, x_De_CT_H2(3,:)) % Position of the first Mass along y direction
 title('CT controllers Position in Y')
 grid on
-legend('No control','CT Stability', 'CT Performance', 'CT Sector','CT Effort', 'CT H2') % Aggiunge la legenda
+legend('No control','CT Stability', 'CT Performance', 'CT Sector','CT Effort', 'CT H2', 'CT Mixed') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Position (Y)') % Etichetta dell'asse y
 
 % Terzo grafico: variabile di controllo U lungo X
 figure
-plot(T, u_De_CT(1,:),T, u_De_CT_perf(1,:),T, u_De_CT_sector(1,:),T, u_De_CT_effort(1,:),T, u_De_CT_H2(1,:)) % variabile di controllo lungo x
+plot(T, u_De_CT(1,:),T, u_De_CT_perf(1,:),T, u_De_CT_sector(1,:),T, u_De_CT_effort(1,:),T, u_De_CT_H2(1,:),T, u_De_CT_Mixed(1,:)) % variabile di controllo lungo x
 title('CT control variable in X')
 grid on
-legend('CT Stability', 'CT Performance', 'CT Sector','CT Effort', 'CT H2') % Aggiunge la legenda
+legend('CT Stability', 'CT Performance', 'CT Sector','CT Effort', 'CT H2', 'CT Mixed') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse x
 ylabel('Control action (U(x))') % Etichetta dell'asse x
 
 figure
-plot(T, u_De_CT(2,:),T, u_De_CT_perf(2,:),T, u_De_CT_sector(2,:),T, u_De_CT_effort(2,:),T, u_De_CT_H2(2,:)) % variabile di controllo lungo y
+plot(T, u_De_CT(2,:),T, u_De_CT_perf(2,:),T, u_De_CT_sector(2,:),T, u_De_CT_effort(2,:),T, u_De_CT_H2(2,:),T, u_De_CT_Mixed(2,:)) % variabile di controllo lungo y
 title('CT control variable in Y')
 grid on
-legend('CT Stability', 'CT Performance', 'CT Sector','CT Effort', 'CT H2') % Aggiunge la legenda
+legend('CT Stability', 'CT Performance', 'CT Sector','CT Effort', 'CT H2', 'CT Mixed') % Aggiunge la legenda
 xlabel('Time (s)') % Etichetta dell'asse y
 ylabel('Control action (U(y))') % Etichetta dell'asse y
 
@@ -264,8 +267,8 @@ plot([-x_limit, x_limit], [0, 0], 'k', 'LineWidth', 1);
 plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1);
 
 % Titolo e legenda, includendo solo la linea rossa e gli autovalori
-title('Eigenvalues Behind a Vertical Line at alpha');
-legend([h_line, h1], {'Vertical Line at alpha', 'Eigenvalues'}, 'Location', 'Best');
+title('LMI Performance');
+legend([h_line, h1], {'alpha', 'Eigenvalues'}, 'Location', 'Best');
 xlabel('Re');
 ylabel('Im');
 
@@ -292,8 +295,8 @@ ylim([-y_limit, y_limit]);
 
 % Define the sector lines
 x_sector = linspace(-x_limit, 0, 100); % Generate points for the lines
-y_sector1 = tand(angle) * x_sector; % First line (+angle w.r.t. x-axis)
-y_sector2 = -tand(angle) * x_sector; % Second line (-angle w.r.t. x-axis)
+y_sector1 = tan(angle) * x_sector; % First line (+angle w.r.t. x-axis)
+y_sector2 = -tan(angle) * x_sector; % Second line (-angle w.r.t. x-axis)
 
 % Plot the sector with the two boundary lines
 h1 = plot(x_sector, y_sector1, 'r-', 'LineWidth', 1.5); % Positive real part
@@ -387,5 +390,49 @@ ylabel('Im');
 
 % Legenda per gli autovalori
 legend(h1, {'Eigenvalues'}, 'Location', 'Best');
+
+hold off;
+
+%% Calcolo autovalori Mixed
+eig_CT_Mixed = eig(A+B*K_De_CT_Mixed);
+spectral_abscissa_Mixed = max(eig_CT_Mixed);   % Spectral Abscissa
+
+%% Plot Autovalori Mixed
+% Find the maximum absolute real value for symmetric axes
+x_limit = max(abs(real(eig_CT_Mixed))) + 0.2;
+y_limit = x_limit; % Make the plot square
+
+% Create the figure
+figure;
+hold on;
+grid on;
+axis equal;
+
+% Set symmetric axis limits
+xlim([-x_limit, x_limit]);
+ylim([-y_limit, y_limit]); 
+
+% Define the sector lines
+x_mixed = linspace(-x_limit, 0, 100); % Generate points for the lines
+y_sector1 = tan(angle) * x_mixed; % First line (+angle w.r.t. x-axis)
+y_sector2 = -tan(angle) * x_mixed; % Second line (-angle w.r.t. x-axis)
+
+% Plot the sector with the two boundary lines
+h1 = plot(x_mixed, y_sector1, 'r-', 'LineWidth', 1.5); % Positive real part
+h2 = plot(x_mixed, y_sector2, 'r-', 'LineWidth', 1.5); % Negative real part
+
+% Plot the eigenvalues in continuous time
+h3 = plot(real(eig_CT_Mixed), imag(eig_CT_Mixed), 'bx', 'MarkerSize', 10, 'LineWidth', 2);
+
+% Draw the axes with symmetric length
+plot([-x_limit, x_limit], [0, 0], 'k', 'LineWidth', 1);
+plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1);
+h_line = plot(-alpha * ones(1, 100), linspace(-y_limit, y_limit, 100), 'r-', 'LineWidth', 1.5); % Reetta rossa perpendicolare
+
+% Title and legend with the sector angle
+title('LMI Sector + Performance + Effort');
+legend([h1, h3], {sprintf('Sector + Performance + Effort'), 'Eigenvalues'}, 'Location', 'Best');
+xlabel('Re');
+ylabel('Im');
 
 hold off;

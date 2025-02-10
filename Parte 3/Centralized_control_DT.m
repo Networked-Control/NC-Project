@@ -87,14 +87,12 @@ spectral_radius = max(moduli);  % Spectral Radius
 disp(['Spectral Radius: ', num2str(spectral_radius)]);
 
 %% Control Structures
-alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
-%rho_DT = exp(alpha*Ts);
-rho_DT = 0.5;
-center = -0.5; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 0.1; % center and radius are computed for Circle LMIs
+rho_DT = 0.8;
+center = 0.5; % Must be positive, the negative sign is already considered in the LMI computation
+radius = 0.35; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
-alpha_L = 0.001; % Effort LMIs
-alpha_Y = 0; % Effort LMIs
+alpha_L = 1; % Effort LMIs
+alpha_Y = 10; % Effort LMIs
 
 % Centralized LMI Performance
 ContStruc_Centr = ones(N,N);
@@ -111,6 +109,8 @@ ContStruc_Centr = ones(N,N);
  [K_c_DT_effort,rho_c_DT_effort,feas_c_DT_effort]=LMI_DT_Effort(F,Gd,Hd,N,ContStruc_Centr,alpha_L,alpha_Y);
  %% H2
  [K_c_DT_H2,rho_c_DT_H2,feas_c_DT_H2]=LMI_DT_H2(F,Gd,Hd,N,ContStruc_Centr);
+  %% Mixed
+ [K_c_DT_Mixed,rho_c_DT_Mixed,feas_c_DT_Mixed]=LMI_DT_Mixed(F,Gd,Hd,N,ContStruc_Centr,rho_DT,alpha_L,alpha_Y);
 
 %% Display
  disp('Results (Discrete-time):')
@@ -119,6 +119,7 @@ ContStruc_Centr = ones(N,N);
  disp(['-  Centralized_Circle: Feasibility=',num2str(feas_c_DT_circle),', rho=',num2str(rho_c_DT_circle),', FM=',num2str(cfm_DT),'.'])
  disp(['-  Centralized_Effort: Feasibility=',num2str(feas_c_DT_effort),', rho=',num2str(rho_c_DT_effort),', FM=',num2str(cfm_DT),'.'])
  disp(['-  Centralized_H2: Feasibility=',num2str(feas_c_DT_H2),', rho=',num2str(rho_c_DT_H2),', FM=',num2str(cfm_DT),'.'])
+ disp(['-  Centralized_Mixed: Feasibility=',num2str(feas_c_DT_Mixed),', rho=',num2str(rho_c_DT_Mixed),', FM=',num2str(cfm_DT),'.'])
 
 %% Plots
 Gtot=[];
@@ -157,6 +158,7 @@ for k=1:Tfinal/Ts
     x_c_DT_circle(:,k)=((F+G*K_c_DT_circle)^k)*x0;
     x_c_DT_effort(:,k)=((F+G*K_c_DT_effort)^k)*x0;
     x_c_DT_H2(:,k)=((F+G*K_c_DT_H2)^k)*x0 + w;
+    x_c_DT_Mixed(:,k)=((F+G*K_c_DT_Mixed)^k)*x0;
 
     % control variable
     u_c_DT(:,k) = K_c_DT * x_c_DT(:,k);
@@ -164,6 +166,7 @@ for k=1:Tfinal/Ts
     u_c_DT_circle(:,k) = K_c_DT_circle * x_c_DT_circle(:,k);
     u_c_DT_effort(:,k) = K_c_DT_effort * x_c_DT_effort(:,k);
     u_c_DT_H2(:,k) = K_c_DT_H2 * x_c_DT_H2(:,k);
+    u_c_DT_Mixed(:,k) = K_c_DT_Mixed * x_c_DT_Mixed(:,k);
 end
 
 %% Calcolo autovalori Stability
@@ -354,39 +357,77 @@ legend(h1, {'Eigenvalues'}, 'Location', 'Best');
 axis equal;  % Assicuriamo che gli assi siano uguali per un grafico quadrato
 hold off;
 
+%% Calcolo autovalori Mixed
+eig_DT_Mixed = eig(F+G*K_c_DT_Mixed);
+
+%% Plot Autovalori Mixed
+figure;
+hold on;
+grid on;
+
+% Impostiamo limiti degli assi in base agli autovalori
+xlim([-1.2 1.2]);
+ylim([-1.2 1.2]);
+
+% Disegnare solo gli autovalori
+h1 = plot(real(eig_DT_Mixed), imag(eig_DT_Mixed), 'bx', 'MarkerSize', 10, 'LineWidth', 2); % Autovalori in blu
+
+% Disegnare gli assi
+plot([-max_limit, max_limit], [0, 0], 'k', 'LineWidth', 1); % Asse X
+plot([0, 0], [-max_limit, max_limit], 'k', 'LineWidth', 1); % Asse Y
+
+% Disegnare il cerchio unitario tratteggiato
+theta = linspace(0, 2*pi, 300);
+plot(cos(theta), sin(theta), 'k--', 'LineWidth', 1.5); % Cerchio unitario tratteggiato
+
+% Disegnare il cerchio con raggio rho_DT (inserito dentro al cerchio unitario)
+plot(rho_DT * cos(theta), rho_DT * sin(theta), 'r-', 'LineWidth', 1.5); % Cerchio con raggio rho_DT
+
+% Titolo e etichette degli assi
+title('LMI Performance + Effort');
+xlabel('Re');
+ylabel('Im');
+
+% Legenda per gli autovalori
+legend(h1, {'Eigenvalues'}, 'Location', 'Best');
+
+axis equal;  % Assicuriamo che gli assi siano uguali per un grafico quadrato
+hold off;
+
+
 
 %% Plotting px1 coordinate for every LMI used
 figure
-plot([Ts:Ts:Tfinal],x_c_DT(1,:),[Ts:Ts:Tfinal],x_c_DT_perf(1,:),[Ts:Ts:Tfinal],x_c_DT_circle(1,:),[Ts:Ts:Tfinal],x_c_DT_effort(1,:),[Ts:Ts:Tfinal],x_c_DT_H2(1,:))
+plot([Ts:Ts:Tfinal],x_c_DT(1,:),[Ts:Ts:Tfinal],x_c_DT_perf(1,:),[Ts:Ts:Tfinal],x_c_DT_circle(1,:),[Ts:Ts:Tfinal],x_c_DT_effort(1,:),[Ts:Ts:Tfinal],x_c_DT_H2(1,:),[Ts:Ts:Tfinal],x_c_DT_Mixed(1,:))
 title('DT controller Position in X')
 grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2', 'DT Mixed')
 xlabel('Time (k)')
 ylabel('Position (X)')
 
 %% Plotting py1 coordinate for every LMI used
 figure
-plot([Ts:Ts:Tfinal],x_c_DT(3,:),[Ts:Ts:Tfinal],x_c_DT_perf(3,:),[Ts:Ts:Tfinal],x_c_DT_circle(3,:),[Ts:Ts:Tfinal],x_c_DT_effort(3,:),[Ts:Ts:Tfinal],x_c_DT_H2(3,:))
+plot([Ts:Ts:Tfinal],x_c_DT(3,:),[Ts:Ts:Tfinal],x_c_DT_perf(3,:),[Ts:Ts:Tfinal],x_c_DT_circle(3,:),[Ts:Ts:Tfinal],x_c_DT_effort(3,:),[Ts:Ts:Tfinal],x_c_DT_H2(3,:),[Ts:Ts:Tfinal],x_c_DT_Mixed(3,:))
 title('DT controller Position in Y')
 grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2', 'DT Mixed')
 xlabel('Time (k)')
 ylabel('Position (Y)')
 
 %% Plotting ux control effort for every LMI used
 figure
-plot([Ts:Ts:Tfinal],u_c_DT(1,:),[Ts:Ts:Tfinal],u_c_DT_perf(1,:),[Ts:Ts:Tfinal],u_c_DT_circle(1,:),[Ts:Ts:Tfinal],u_c_DT_effort(1,:),[Ts:Ts:Tfinal],u_c_DT_H2(1,:))
+plot([Ts:Ts:Tfinal],u_c_DT(1,:),[Ts:Ts:Tfinal],u_c_DT_perf(1,:),[Ts:Ts:Tfinal],u_c_DT_circle(1,:),[Ts:Ts:Tfinal],u_c_DT_effort(1,:),[Ts:Ts:Tfinal],u_c_DT_H2(1,:),[Ts:Ts:Tfinal],u_c_DT_Mixed(1,:))
 title('DT control variable in X')
 grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2', 'DT Mixed')
 xlabel('Time (k)')
 ylabel('Control U(x)')
 
 %% Plotting uy control effort for every LMI used
 figure
-plot([Ts:Ts:Tfinal],u_c_DT(2,:),[Ts:Ts:Tfinal],u_c_DT_perf(2,:),[Ts:Ts:Tfinal],u_c_DT_circle(2,:),[Ts:Ts:Tfinal],u_c_DT_effort(2,:),[Ts:Ts:Tfinal],u_c_DT_H2(2,:))
+plot([Ts:Ts:Tfinal],u_c_DT(2,:),[Ts:Ts:Tfinal],u_c_DT_perf(2,:),[Ts:Ts:Tfinal],u_c_DT_circle(2,:),[Ts:Ts:Tfinal],u_c_DT_effort(2,:),[Ts:Ts:Tfinal],u_c_DT_H2(2,:),[Ts:Ts:Tfinal],u_c_DT_Mixed(2,:))
 title('DT control variable in Y')
 grid on
-legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2')
+legend('DT Stability', 'DT Performance', 'DT Circle Area', 'DT Effort', 'DT H2', 'DT Mixed')
 xlabel('Time (k)')
 ylabel('Control U(y)')

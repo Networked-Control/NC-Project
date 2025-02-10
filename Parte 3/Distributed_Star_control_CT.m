@@ -94,8 +94,8 @@ rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
-alpha_L = 10; % Effort LMIs
-alpha_Y = 0; % Effort LMIs
+alpha_L = 0.1; % Effort LMIs
+alpha_Y = 10; % Effort LMIs
 
 
 % Distributed LMI Performance
@@ -268,8 +268,8 @@ plot([-x_limit, x_limit], [0, 0], 'k', 'LineWidth', 1);
 plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1);
 
 % Titolo e legenda, includendo solo la linea rossa e gli autovalori
-title('Eigenvalues Behind a Vertical Line at alpha');
-legend([h_line, h1], {'Vertical Line at alpha', 'Eigenvalues'}, 'Location', 'Best');
+title('LMI Performance');
+legend([h_line, h1], {'alpha', 'Eigenvalues'}, 'Location', 'Best');
 xlabel('Re');
 ylabel('Im');
 

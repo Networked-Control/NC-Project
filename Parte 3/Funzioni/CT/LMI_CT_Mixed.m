@@ -1,4 +1,4 @@
-function [K,rho,feas]=LMI_CT_Mixed(A,B,C,N,ContStruc,alpha,angle)
+function [K,rho,feas]=LMI_CT_Mixed(A,B,C,N,ContStruc,alpha,angle,alpha_L,alpha_Y)
 % Computes, using LMIs, the distributed "state feedback" control law for the continuous-time system, with reference to the control
 % information structure specified by 'ContStruc'.
 %
@@ -29,6 +29,10 @@ mtot=sum(m);
 
 yalmip clear
 
+k_L =sdpvar;
+k_L_sqrt = sqrt(k_L);
+k_Y = sdpvar;
+
 if ContStruc==ones(N,N)
     % Centralized design
     Y=sdpvar(ntot);
@@ -57,11 +61,20 @@ M = [sin(angle)*(A*Y+Y*A'+Btot*L+L'*Btot')  cos(angle)*(A*Y-Y*A'+Btot*L-L'*Btot'
      cos(angle)*(Y*A'-A*Y+L'*Btot'-Btot*L)    sin(angle)*(A*Y+Y*A'+Btot*L+L'*Btot')];  % 72 x72
 LMIconstr_Sector=[M <=-1e-5*eye(2*ntot)]+[Y>=1e-2*eye(ntot)];
 
+    M = [k_L_sqrt*eye(ntot) L';L eye(mtot)];  % 54x54
+
+    constr_1_Effort = [M>=1e-2*eye(ntot+mtot)];
+
+    M_2 = [k_Y*eye(ntot) eye(ntot);eye(ntot) Y]; % 72x72
+
+    constr_2_Effort = [M_2>=1e-2*eye(ntot*2)];
+
 
 options=sdpsettings('solver','sedumi');
-LMI_constr=[LMIconstr_Stability,LMIconstr_Performance,LMIconstr_Sector];
+LMI_constr=[LMIconstr_Stability,LMIconstr_Performance,LMIconstr_Sector,constr_1_Effort,constr_2_Effort];
+objective_function = alpha_L*k_L+alpha_Y*k_Y;
 
-J=optimize(LMI_constr,[],options);
+J=optimize(LMI_constr,objective_function,options);
 feas=J.problem;
 L=double(L);
 Y=double(Y);

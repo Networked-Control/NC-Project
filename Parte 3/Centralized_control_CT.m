@@ -88,12 +88,12 @@ spectral_abscissa = max(real_parts_CT);   % Spectral Abscissa
 disp(['Spectral Abscissa: ', num2str(spectral_abscissa)]);
 
 %% Control Structures
-alpha = 10;  % Must be positive, the negative sign is already considered in the LMI computation
+alpha = 1;  % Must be positive, the negative sign is already considered in the LMI computation
 %rho_DT = exp(alpha*Ts);
 rho_DT = 0.88;
 angle = pi/4; % Sector LMIs
-alpha_L = 0.001; % Effort LMIs
-alpha_Y = 0; % Effort LMIs
+alpha_L = 0.1; % Effort LMIs
+alpha_Y = 10; % Effort LMIs
 
 % Centralized LMI Performance
 ContStruc_Centr = ones(N,N);
@@ -111,7 +111,7 @@ ContStruc_Centr = ones(N,N);
 %% H2 
  [K_c_CT_H2,rho_c_CT_H2,feas_c_CT_H2]=LMI_CT_H2_Noise_Test(A,Bd,Cd,N,ContStruc_Centr) % LMI for H2
  %% Mixed
- [K_c_CT_Mixed,rho_c_CT_Mixed,feas_c_CT_Mixed]=LMI_CT_Mixed(A,Bd,Cd,N,ContStruc_Centr,alpha,angle) % LMI for H2
+ [K_c_CT_Mixed,rho_c_CT_Mixed,feas_c_CT_Mixed]=LMI_CT_Mixed(A,Bd,Cd,N,ContStruc_Centr,alpha,angle,alpha_L,alpha_Y) % LMI for H2
 
  %% Display
 
@@ -202,7 +202,7 @@ plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1);
 
 % Titolo e legenda, includendo solo la linea rossa e gli autovalori
 title('LMI Performance');
-legend([h_line, h1], {'Vertical Line at alpha', 'Eigenvalues'}, 'Location', 'Best');
+legend([h_line, h1], {'alpha', 'Eigenvalues'}, 'Location', 'Best');
 xlabel('Re');
 ylabel('Im');
 
@@ -367,8 +367,8 @@ plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1);
 h_line = plot(-alpha * ones(1, 100), linspace(-y_limit, y_limit, 100), 'r-', 'LineWidth', 1.5); % Reetta rossa perpendicolare
 
 % Title and legend with the sector angle
-title('LMI Sector + Performance');
-legend([h1, h3], {sprintf('Sector + Performance'), 'Eigenvalues'}, 'Location', 'Best');
+title('LMI Sector + Performance + Effort');
+legend([h1, h3], {sprintf('Sector + Performance + Effort'), 'Eigenvalues'}, 'Location', 'Best');
 xlabel('Re');
 ylabel('Im');
 
