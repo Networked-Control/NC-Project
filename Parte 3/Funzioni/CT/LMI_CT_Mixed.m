@@ -54,14 +54,14 @@ end
 LMIconstr_Stability=[Y*A'+A*Y+Btot*L+L'*Btot'<=-1e-2*eye(ntot)]+[Y>=1e-2*eye(ntot)];
 LMIconstr_Performance=[Y*A'+A*Y+Btot*L+L'*Btot'+2*alpha*Y <=-1e-2*eye(ntot)]+[Y>=1e-2*eye(ntot)];
 M = [sin(angle)*(A*Y+Y*A'+Btot*L+L'*Btot')  cos(angle)*(A*Y-Y*A'+Btot*L-L'*Btot');
-     cos(angle)*(Y*A'-A*Y+L'*Btot'-Btot*L)    sin(angle)*(A*Y+Y*A'+Btot*L+L'*Btot')]  % 72 x72
+     cos(angle)*(Y*A'-A*Y+L'*Btot'-Btot*L)    sin(angle)*(A*Y+Y*A'+Btot*L+L'*Btot')];  % 72 x72
 LMIconstr_Sector=[M <=-1e-5*eye(2*ntot)]+[Y>=1e-2*eye(ntot)];
 
 
 options=sdpsettings('solver','sedumi');
 LMI_constr=[LMIconstr_Stability,LMIconstr_Performance,LMIconstr_Sector];
 
-J=optimize(LMIconstr,[],options);
+J=optimize(LMI_constr,[],options);
 feas=J.problem;
 L=double(L);
 Y=double(Y);

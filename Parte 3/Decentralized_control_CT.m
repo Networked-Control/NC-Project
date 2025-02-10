@@ -93,7 +93,7 @@ alpha = 1;  % Must be positive, the negative sign is already considered in the L
 rho_DT = 0.88;
 center = 20; % Must be positive, the negative sign is already considered in the LMI computation
 radius = 1; % center and radius are computed for Circle LMIs
-angle = 45; % Sector LMIs
+angle = pi/4; % Sector LMIs
 alpha_L = 10; % Effort LMIs
 alpha_Y = 0; % Effort LMIs
 

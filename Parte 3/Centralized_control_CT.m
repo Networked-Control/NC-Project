@@ -91,9 +91,7 @@ disp(['Spectral Abscissa: ', num2str(spectral_abscissa)]);
 alpha = 10;  % Must be positive, the negative sign is already considered in the LMI computation
 %rho_DT = exp(alpha*Ts);
 rho_DT = 0.88;
-center = 20; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 1; % center and radius are computed for Circle LMIs
-angle = -10; % Sector LMIs
+angle = pi/2; % Sector LMIs
 alpha_L = 0.001; % Effort LMIs
 alpha_Y = 0; % Effort LMIs
 
@@ -203,7 +201,7 @@ plot([-x_limit, x_limit], [0, 0], 'k', 'LineWidth', 1);
 plot([0, 0], [-y_limit, y_limit], 'k', 'LineWidth', 1);
 
 % Titolo e legenda, includendo solo la linea rossa e gli autovalori
-title('Eigenvalues Behind a Vertical Line at alpha');
+title('LMI Performance');
 legend([h_line, h1], {'Vertical Line at alpha', 'Eigenvalues'}, 'Location', 'Best');
 xlabel('Re');
 ylabel('Im');
