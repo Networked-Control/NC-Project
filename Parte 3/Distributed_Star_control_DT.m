@@ -88,8 +88,8 @@ disp(['Spectral Radius: ', num2str(spectral_radius)]);
 
 %% Control Structures
 rho_DT = 0.5;
-center = 0.5; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 0.35; % center and radius are computed for Circle LMIs
+center = -0.5; % Must be positive, the negative sign is already considered in the LMI computation
+radius = 0.4; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
 alpha_L = 0.1; % Effort LMIs
 alpha_Y = 10; % Effort LMIs

@@ -52,7 +52,7 @@ C=eye(4*N);
 
 %% Discretization
 % Time costant analysis
-Ts= 0.1; %Shannon Theorem on signal sampling (fs=2*fc at least) 
+Ts= 0.1 %Shannon Theorem on signal sampling (fs=2*fc at least) 
 [F,G,H,W,Ts]=ssdata(c2d(ss(A,B,C,[]),Ts));
 
 %% Decomposition
@@ -88,8 +88,8 @@ disp(['Spectral Radius: ', num2str(spectral_radius)]);
 
 %% Control Structures
 rho_DT = 0.8;
-center = 0.5; % Must be positive, the negative sign is already considered in the LMI computation
-radius = 0.35; % center and radius are computed for Circle LMIs
+center = -0.5; % Must be positive, the negative sign is already considered in the LMI computation
+radius = 0.4; % center and radius are computed for Circle LMIs
 angle = 45; % Sector LMIs
 alpha_L = 10; % Effort LMIs
 alpha_Y = 1; % Effort LMIs
@@ -137,6 +137,7 @@ T=0:0.01:Tfinal;
 min_x0 = -10;
 max_x0 = 10;
 x0 = min_x0 + (max_x0-min_x0) .* rand(36,1);  % Generate a random number between [min_x0, max_x0]
+% DT Simulation
 
 % DT Simulation
 
